@@ -100,7 +100,6 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 /* ── APP SHELL ── */
 .app { display: none; background: var(--surface); min-height: 100vh; }
 .app.on { display: block; }
-.ios-island { display: none; }
 
 /* ── TOP BAR ── */
 .topbar { background: var(--blue); height: 54px; position: sticky; top: 0; z-index: 200; }
@@ -387,12 +386,11 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .sales-workbench-in { grid-template-columns: 1fr; }
 }
 @media (max-width: 680px) {
-  body { background: #111827; }
+  body { background: var(--surface); }
   .gate { align-items: flex-start; padding: 24px 14px; overflow-y: auto; }
   .gate-card { border-radius: 28px; padding: 28px 18px; margin-top: 16px; }
-  .app.on { width: min(100%, 430px); margin: 0 auto; min-height: 100vh; border-left: 1px solid rgba(255,255,255,.08); border-right: 1px solid rgba(255,255,255,.08); box-shadow: 0 0 0 10px #05070A; position: relative; }
-  .ios-island { display: block; position: sticky; top: 8px; z-index: 500; width: 118px; height: 31px; background: #05070A; border-radius: 18px; margin: 8px auto -39px; box-shadow: inset 18px 0 0 rgba(255,255,255,.03); }
-  .topbar { height: 76px; padding-top: 24px; position: sticky; top: 0; box-shadow: 0 1px 0 rgba(255,255,255,.08); }
+  .app.on { width: 100%; min-height: 100vh; position: relative; }
+  .topbar { height: calc(58px + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top); position: sticky; top: 0; box-shadow: 0 1px 0 rgba(255,255,255,.08); }
   .topbar-in { padding: 0 14px; }
   .bb-mark.small { font-size: 11px; padding: 5px 7px; }
   .bb-mark.small .bb-tag { width: 16px; height: 11px; }
@@ -515,8 +513,6 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 
 <!-- APP -->
 <div class="app" id="app">
-  <div class="ios-island" aria-hidden="true"></div>
-
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-in">
