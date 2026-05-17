@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Open Box"/>
 <meta name="theme-color" content="#0045BE"/>
+<meta name="description" content="Best Buy open box sales assistant for store-specific quotes, member attach, and deal comparisons."/>
+<link rel="manifest" href="manifest.webmanifest"/>
+<link rel="icon" href="assets/app-icon.svg" type="image/svg+xml"/>
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png"/>
 <title>Open Box — Best Buy Connect</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -339,6 +344,17 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: white; padding: 11px 22px; border-radius: 24px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(15,25,35,.2); z-index: 999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
+/* ── INSTALL PROMPT ── */
+.install-prompt { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(120%); width: min(392px, calc(100% - 24px)); background: var(--white); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 18px 50px rgba(15,25,35,.22); z-index: 650; padding: 12px; display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center; transition: transform .28s cubic-bezier(.2,.9,.2,1); }
+.install-prompt.show { transform: translateX(-50%) translateY(0); }
+.install-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--blue); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; line-height: .9; position: relative; overflow: hidden; }
+.install-icon::after { content: ""; width: 15px; height: 10px; background: var(--yellow); border-radius: 1px 1px 1px 4px; position: absolute; right: 5px; bottom: 8px; }
+.install-title { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.install-copy { font-size: 11px; line-height: 1.35; color: var(--ink-3); }
+.install-actions { display: flex; align-items: center; gap: 6px; }
+.install-action { height: 34px; border: 1.5px solid var(--blue); background: var(--blue); color: var(--white); border-radius: var(--r8); padding: 0 10px; font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.install-close { width: 30px; height: 30px; border: none; border-radius: 50%; background: var(--surface); color: var(--ink-3); font-size: 18px; cursor: pointer; }
+
 /* ── FOOTER ── */
 .app-footer { text-align: center; padding: 20px; font-size: 12px; color: var(--ink-3); }
 .app-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
@@ -380,6 +396,8 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .pc-act { flex-basis: 50%; }
   .pc-act:nth-child(3) { border-left: none; border-top: 1px solid var(--line-2); }
   .pc-act:nth-child(4) { border-top: 1px solid var(--line-2); }
+  .install-prompt { bottom: 12px; grid-template-columns: 38px 1fr; }
+  .install-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
 </style>
 </head>
@@ -616,6 +634,17 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="install-prompt" id="install-prompt" role="dialog" aria-live="polite" aria-label="Install Open Box Finder">
+  <div class="install-icon" aria-hidden="true">BEST<br>BUY</div>
+  <div>
+    <div class="install-title">Add Open Box to Home Screen</div>
+    <div class="install-copy" id="install-copy">Tap Share, then Add to Home Screen for the app-style view.</div>
+  </div>
+  <div class="install-actions">
+    <button class="install-action" id="install-action" type="button">How</button>
+    <button class="install-close" id="install-close" type="button" aria-label="Dismiss install prompt">×</button>
+  </div>
+</div>
 
 <script>
 // ─────────────────────────────────────────────
@@ -844,6 +873,7 @@ let compareIds = [];
 let quoteIds = [];
 let memberPlan = "plus";
 let memberSession = null;
+let deferredInstallPrompt = null;
 
 // ─────────────────────────────────────────────
 //  BOOT
@@ -854,6 +884,9 @@ if (API_KEY) {
 } else {
   document.getElementById("gate").style.display = "flex";
 }
+
+registerPwa();
+setupInstallPrompt();
 
 document.getElementById("gate-btn").addEventListener("click", async () => {
   const key = document.getElementById("api-key").value.trim();
@@ -1598,6 +1631,58 @@ function showToast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg; t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 2300);
+}
+
+function registerPwa() {
+  if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
+
+function setupInstallPrompt() {
+  const prompt = document.getElementById("install-prompt");
+  const action = document.getElementById("install-action");
+  const copy = document.getElementById("install-copy");
+  const close = document.getElementById("install-close");
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const dismissed = localStorage.getItem("bb_install_dismissed") === "1";
+
+  const showPrompt = () => {
+    if (isStandalone || dismissed) return;
+    prompt.classList.add("show");
+  };
+
+  close.addEventListener("click", () => {
+    localStorage.setItem("bb_install_dismissed", "1");
+    prompt.classList.remove("show");
+  });
+
+  action.addEventListener("click", async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice.catch(() => {});
+      deferredInstallPrompt = null;
+      prompt.classList.remove("show");
+      return;
+    }
+    showToast(isIos ? "Tap Share, then Add to Home Screen" : "Use browser menu to install Open Box");
+  });
+
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    copy.textContent = "Install the app for full-screen access from your home screen.";
+    action.textContent = "Install";
+    setTimeout(showPrompt, 900);
+  });
+
+  if (isIos) {
+    copy.textContent = "Tap Share, then Add to Home Screen for the full-screen app.";
+    action.textContent = "How";
+    setTimeout(showPrompt, 1200);
+  }
 }
 </script>
 </body>

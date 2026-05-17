@@ -1,0 +1,26 @@
+{
+  "name": "Best Buy Open Box Finder",
+  "short_name": "Open Box",
+  "description": "Store-specific open box sales assistant for member lookup, comparisons, and quote building.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0045BE",
+  "theme_color": "#0045BE",
+  "categories": ["business", "productivity", "shopping"],
+  "icons": [
+    {
+      "src": "/assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

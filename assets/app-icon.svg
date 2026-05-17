@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Open Box Finder">
+  <rect width="512" height="512" rx="108" fill="#0045BE"/>
+  <path fill="#FFF100" d="M318 318h116v72H318c-15 0-27-12-27-27v-18c0-15 12-27 27-27Z"/>
+  <circle cx="397" cy="354" r="7" fill="#0045BE"/>
+  <g fill="#FFFFFF" font-family="Arial Black, Arial, sans-serif" font-weight="900" letter-spacing="-8">
+    <text x="62" y="180" font-size="92">BEST</text>
+    <text x="62" y="266" font-size="92">BUY</text>
+  </g>
+  <rect x="62" y="324" width="184" height="28" rx="14" fill="#FFF100"/>
+  <rect x="62" y="372" width="250" height="28" rx="14" fill="#FFFFFF" opacity=".92"/>
+</svg>
