@@ -213,8 +213,10 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .quote-list { display: grid; gap: 8px; margin-bottom: 10px; }
 .quote-empty { min-height: 48px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: var(--r8); color: var(--ink-3); font-size: 12px; padding: 8px; text-align: center; }
 .quote-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; font-size: 12px; border-bottom: 1px solid var(--line-2); padding-bottom: 8px; }
+.quote-row.membership { background: #EEF3FF; border: 1px solid #D7E4FF; border-radius: var(--r8); padding: 8px; }
 .quote-name { font-weight: 700; color: var(--ink); line-height: 1.25; }
 .quote-price { font-weight: 800; color: var(--ink); white-space: nowrap; }
+.quote-lock { font-size: 10px; font-weight: 900; color: var(--blue); text-transform: uppercase; letter-spacing: .06em; }
 .quote-totals { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r8); padding: 9px; display: grid; gap: 6px; margin-bottom: 10px; }
 .quote-total-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--ink-3); }
 .quote-total-row strong { color: var(--ink); font-size: 15px; }
@@ -1393,8 +1395,8 @@ function renderCardOffer() {
     ? `$${rewardCredit.toFixed(2)}`
     : "Example: $100.00";
   const rewardsSub = quoteItems.length
-    ? `estimated 10% back on $${basketTotal.toFixed(2)} products only, before tax`
-    : "estimated 10% back on product price only, before tax";
+    ? `10% back on $${basketTotal.toFixed(2)} product price only; ${membershipName()} and tax excluded`
+    : "estimated 10% back on product price only; membership and tax excluded";
   if (memberSession?.hasCard) {
     kicker.textContent = "Card active";
     body.innerHTML = `
@@ -1534,13 +1536,20 @@ function renderSalesTools() {
 
   const quoteItems = quoteIds.map(findItem).filter(Boolean);
   const quoteList = document.getElementById("quote-list");
+  const membershipRow = quoteItems.length ? `
+    <div class="quote-row membership">
+      <div class="quote-name">${membershipName()}</div>
+      <div class="quote-price">$${membershipCost().toFixed(2)}</div>
+      <span class="quote-lock">Attach</span>
+    </div>
+  ` : "";
   quoteList.innerHTML = quoteItems.length ? quoteItems.map(i => `
     <div class="quote-row">
       <div class="quote-name">${i.name}</div>
       <div class="quote-price">$${i.sale.toFixed(2)}</div>
       <button class="icon-mini" data-remove-quote="${itemId(i)}" type="button">×</button>
     </div>
-  `).join("") : `<div class="quote-empty">Add products to build a customer basket</div>`;
+  `).join("") + membershipRow : `<div class="quote-empty">Add products to build a customer basket</div>`;
 
   const subtotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
   const savings = quoteItems.reduce((sum, i) => sum + i.savings, 0);
@@ -1548,7 +1557,7 @@ function renderSalesTools() {
   const taxable = subtotal + planCost;
   const tax = taxable * getActiveStore().tax;
   const estimated = taxable + tax;
-  document.getElementById("quote-kicker").textContent = `${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"}`;
+  document.getElementById("quote-kicker").textContent = quoteItems.length ? `${quoteItems.length} product${quoteItems.length === 1 ? "" : "s"} + attach` : "0 items";
   document.getElementById("quote-totals").innerHTML = `
     <div class="quote-total-row"><span>Products</span><strong>$${subtotal.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>${membershipName()}</span><strong>$${planCost.toFixed(2)}</strong></div>
