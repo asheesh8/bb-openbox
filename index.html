@@ -207,7 +207,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .store-fact span { color: var(--ink-3); font-weight: 700; }
 .store-fact strong { color: var(--ink); font-weight: 800; text-align: right; }
 .quote-total-row.tax strong { color: var(--blue); }
-.quote-dock { display: none; }
+.quote-fab { display: none; }
 
 /* DEPT FILTERS */
 .dept-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
@@ -422,11 +422,10 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .pc-act { flex-basis: 50%; height: 48px; font-size: 12px; }
   .pc-act:nth-child(3) { border-left: none; border-top: 1px solid var(--line-2); }
   .pc-act:nth-child(4) { border-top: 1px solid var(--line-2); }
-  .quote-dock { position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 520; width: min(406px, calc(100% - 22px)); background: var(--ink); color: var(--white); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 10px 10px 10px 14px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; box-shadow: 0 14px 40px rgba(0,0,0,.34); }
-  .quote-dock-title { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: rgba(255,255,255,.58); margin-bottom: 2px; }
-  .quote-dock-main { font-size: 15px; font-weight: 800; line-height: 1.2; }
-  .quote-dock-sub { font-size: 11px; color: rgba(255,255,255,.66); margin-top: 2px; }
-  .quote-dock-btn { height: 40px; border: none; border-radius: 12px; background: var(--yellow); color: var(--blue); font-family: inherit; font-size: 12px; font-weight: 900; padding: 0 12px; cursor: pointer; }
+  .quote-fab { position: fixed; right: 14px; bottom: 14px; z-index: 520; min-width: 68px; height: 58px; border: none; border-radius: 18px; background: var(--ink); color: var(--white); display: flex; align-items: center; justify-content: center; gap: 7px; padding: 0 12px; box-shadow: 0 14px 34px rgba(0,0,0,.34); cursor: pointer; font-family: inherit; }
+  .quote-fab-icon { font-size: 24px; line-height: 1; position: relative; }
+  .quote-fab-count { position: absolute; top: -9px; right: -11px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--yellow); color: var(--blue); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid var(--ink); }
+  .quote-fab-total { font-size: 12px; font-weight: 900; line-height: 1; white-space: nowrap; }
   .install-prompt { bottom: 12px; grid-template-columns: 38px 1fr; }
   .install-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
@@ -624,14 +623,10 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 
   <div class="app-footer">Built by <a href="https://ashish-portfolio-rust.vercel.app" target="_blank">Ashish Subedi</a> · Best Buy Store 360, Williston VT</div>
 </div>
-<div class="quote-dock" id="quote-dock" aria-live="polite">
-  <div>
-    <div class="quote-dock-title">Customer Basket</div>
-    <div class="quote-dock-main" id="quote-dock-main">No items added</div>
-    <div class="quote-dock-sub" id="quote-dock-sub">Tap Basket on a product to start</div>
-  </div>
-  <button class="quote-dock-btn" id="quote-dock-btn" type="button">Quote</button>
-</div>
+<button class="quote-fab" id="quote-fab" type="button" aria-label="Open customer basket">
+  <span class="quote-fab-icon" aria-hidden="true">🧺<span class="quote-fab-count" id="quote-fab-count">0</span></span>
+  <span class="quote-fab-total" id="quote-fab-total">$0</span>
+</button>
 
 <!-- AI SHEET -->
 <div class="ai-ov" id="ai-ov">
@@ -1031,7 +1026,7 @@ document.getElementById("copy-quote-btn").addEventListener("click", () => {
   showToast("Quote copied for customer recap");
 });
 
-document.getElementById("quote-dock-btn").addEventListener("click", () => {
+document.getElementById("quote-fab").addEventListener("click", () => {
   document.getElementById("quote-panel").scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 });
 
@@ -1414,12 +1409,8 @@ function renderSalesTools() {
     <div class="quote-total-row"><span>Customer saves</span><strong>$${savings.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>Estimated basket</span><strong>$${estimated.toFixed(2)}</strong></div>
   `;
-  document.getElementById("quote-dock-main").textContent = quoteItems.length
-    ? `${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"} · $${estimated.toFixed(2)}`
-    : "No items added";
-  document.getElementById("quote-dock-sub").textContent = quoteItems.length
-    ? `Save $${savings.toFixed(2)} · ${getActiveStore().city} tax included`
-    : "Tap Basket on a product to start";
+  document.getElementById("quote-fab-count").textContent = quoteItems.length;
+  document.getElementById("quote-fab-total").textContent = quoteItems.length ? `$${estimated.toFixed(0)}` : "$0";
 
   document.querySelectorAll("[data-remove-compare]").forEach(btn => {
     btn.addEventListener("click", () => {
