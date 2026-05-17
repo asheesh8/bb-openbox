@@ -37,7 +37,11 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .gate { position: fixed; inset: 0; z-index: 600; background: var(--blue); display: flex; align-items: center; justify-content: center; padding: 24px; }
 .gate-card { background: var(--white); border-radius: var(--r24); padding: 36px 32px; max-width: 420px; width: 100%; }
 .gate-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-.bb-logo-img { width: 102px; height: auto; display: block; border-radius: 2px; }
+.bb-mark { display: inline-flex; align-items: center; gap: 7px; background: var(--blue); color: var(--white); border-radius: var(--r4); padding: 9px 10px; font-weight: 900; font-size: 17px; line-height: .85; letter-spacing: -.03em; }
+.bb-mark.small { padding: 6px 8px; font-size: 12px; }
+.bb-mark-text { display: inline-block; }
+.bb-tag { width: 22px; height: 15px; background: var(--yellow); border-radius: 2px 2px 2px 6px; position: relative; display: inline-block; transform: skew(-4deg); }
+.bb-tag::after { content: ""; position: absolute; right: 4px; top: 6px; width: 3px; height: 3px; background: var(--blue); border-radius: 50%; }
 .gate-pill { background: var(--yellow); color: var(--blue); font-weight: 700; font-size: 12px; padding: 5px 10px; border-radius: var(--r4); letter-spacing: .06em; text-transform: uppercase; }
 .gate-wordmark { font-weight: 700; font-size: 17px; color: var(--ink); }
 .gate-h { font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
@@ -97,7 +101,6 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .topbar { background: var(--blue); height: 54px; position: sticky; top: 0; z-index: 200; }
 .topbar-in { max-width: 1080px; margin: 0 auto; height: 100%; display: flex; align-items: center; gap: 12px; padding: 0 20px; }
 .tb-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.tb-logo-img { width: 74px; height: auto; display: block; }
 .tb-pill { background: var(--yellow); color: var(--blue); font-weight: 700; font-size: 11px; padding: 3px 7px; border-radius: 3px; letter-spacing: .05em; text-transform: uppercase; }
 .tb-sep { width: 1px; height: 18px; background: rgba(255,255,255,.2); }
 .tb-name { color: white; font-size: 14px; font-weight: 600; }
@@ -141,7 +144,12 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .tool-kicker { font-size: 10px; font-weight: 800; color: var(--blue); letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; }
 .tool-body { padding: 12px; }
 .member-brand { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
-.member-logo { width: 128px; max-width: 58%; height: auto; display: block; }
+.mybb-wordmark { color: var(--ink); font-size: 22px; line-height: 1; letter-spacing: -.04em; display: inline-flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+.mybb-wordmark .my { font-weight: 400; }
+.mybb-wordmark .best { font-weight: 900; }
+.mybb-wordmark .buy { font-weight: 900; }
+.mybb-wordmark .tag { width: 18px; height: 12px; background: var(--yellow); border-radius: 2px 2px 2px 5px; position: relative; top: 1px; display: inline-block; }
+.mybb-wordmark .tag::after { content: ""; position: absolute; right: 3px; top: 5px; width: 2px; height: 2px; background: var(--ink); border-radius: 50%; }
 .member-state { font-size: 11px; font-weight: 700; color: var(--green); background: var(--green-bg); padding: 5px 8px; border-radius: 18px; white-space: nowrap; }
 .member-lookup { display: flex; gap: 6px; margin-bottom: 10px; }
 .member-input { min-width: 0; flex: 1; height: 36px; border: 1.5px solid var(--line); border-radius: var(--r8); padding: 0 10px; font-family: inherit; font-size: 12px; outline: none; background: var(--surface); }
@@ -150,11 +158,26 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .member-mini { display: flex; gap: 6px; flex-wrap: wrap; }
 .member-chip { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r4); padding: 5px 7px; font-size: 11px; font-weight: 600; color: var(--ink-2); }
 .attach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.attach-card { border: 1.5px solid var(--line); border-radius: var(--r8); background: var(--surface); padding: 8px; cursor: pointer; transition: border-color .12s, background .12s; text-align: left; min-height: 112px; }
+.attach-card { border: 1.5px solid var(--line); border-radius: var(--r8); background: var(--surface); padding: 10px; cursor: pointer; transition: border-color .12s, background .12s; text-align: left; min-height: 108px; }
 .attach-card.on { border-color: var(--blue); background: #EEF3FF; }
-.attach-img { width: 100%; height: 48px; object-fit: contain; display: block; margin-bottom: 7px; border-radius: 4px; background: var(--white); }
+.attach-card.plus { background: #FFF9D8; }
+.attach-card.total { background: #18242D; }
+.attach-card.total.on { border-color: var(--yellow); background: #18242D; }
+.plan-mark { min-height: 48px; border-radius: var(--r8); padding: 8px; margin-bottom: 8px; display: flex; flex-direction: column; justify-content: center; line-height: .98; letter-spacing: -.04em; }
+.plan-mark.plus { background: var(--yellow); color: var(--ink); }
+.plan-mark.total { background: #0F1923; color: var(--white); border: 1px solid rgba(255,255,255,.12); }
+.plan-mark .my { font-size: 14px; font-weight: 400; }
+.plan-mark .best { font-size: 16px; font-weight: 900; }
+.plan-mark .tier { font-size: 18px; font-weight: 400; }
 .attach-name { font-size: 12px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.attach-card.total .attach-name { color: var(--white); }
 .attach-price { font-size: 11px; color: var(--ink-3); font-weight: 600; }
+.attach-card.total .attach-price { color: rgba(255,255,255,.68); }
+.member-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.member-detail { border: 1px solid var(--line); background: var(--white); border-radius: var(--r8); padding: 8px; }
+.member-detail-label { font-size: 9px; font-weight: 800; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 4px; }
+.member-detail-value { font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.25; }
+.member-detail-value.good { color: var(--green); }
 .compare-slots { display: grid; gap: 8px; }
 .compare-empty { border: 1px dashed var(--line); border-radius: var(--r8); min-height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; text-align: center; padding: 8px; }
 .compare-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
@@ -324,7 +347,8 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .ios-island { display: block; position: sticky; top: 8px; z-index: 500; width: 118px; height: 31px; background: #05070A; border-radius: 18px; margin: 8px auto -39px; box-shadow: inset 18px 0 0 rgba(255,255,255,.03); }
   .topbar { height: 76px; padding-top: 24px; position: sticky; top: 0; }
   .topbar-in { padding: 0 14px; }
-  .tb-logo-img { width: 62px; }
+  .bb-mark.small { font-size: 11px; padding: 5px 7px; }
+  .bb-mark.small .bb-tag { width: 16px; height: 11px; }
   .tb-name { font-size: 13px; }
   .tb-store { max-width: 122px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .dept-bar-in { padding: 0 10px; }
@@ -338,7 +362,8 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .filter-sep { display: none; }
   .sales-workbench-in { padding: 10px 12px; gap: 10px; }
   .tool-panel { border-radius: 10px; }
-  .member-logo { width: 112px; }
+  .mybb-wordmark { font-size: 19px; }
+  .member-detail-grid { grid-template-columns: 1fr; }
   .attach-card { min-height: 104px; }
   .results-header { padding: 12px 14px 8px; }
   .grid-wrap { padding: 0 12px 22px; }
@@ -357,7 +382,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 <div class="gate" id="gate">
   <div class="gate-card">
     <div class="gate-logo">
-      <img class="bb-logo-img" src="assets/bestbuy-logo.png" alt="Best Buy"/>
+      <div class="bb-mark" aria-label="Best Buy"><span class="bb-mark-text">BEST<br>BUY</span><span class="bb-tag"></span></div>
       <span class="gate-wordmark">Open Box Finder</span>
     </div>
     <div class="gate-h">Connect to Live Inventory</div>
@@ -418,7 +443,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   <div class="topbar">
     <div class="topbar-in">
       <div class="tb-logo">
-        <img class="tb-logo-img" src="assets/bestbuy-logo.png" alt="Best Buy"/>
+        <div class="bb-mark small" aria-label="Best Buy"><span class="bb-mark-text">BEST<br>BUY</span><span class="bb-tag"></span></div>
         <div class="tb-sep"></div>
         <span class="tb-name">Open Box Finder</span>
       </div>
@@ -463,7 +488,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
         </div>
         <div class="tool-body">
           <div class="member-brand">
-            <img class="member-logo" src="assets/my-bestbuy-memberships.png" alt="My Best Buy Memberships"/>
+            <div class="mybb-wordmark" aria-label="My Best Buy Memberships"><span class="my">my</span><span class="best">BEST</span><span class="buy">BUY</span><span class="tag"></span></div>
             <span class="member-state" id="member-state">Guest</span>
           </div>
           <div class="member-lookup">
@@ -474,6 +499,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
             <span class="member-chip">Basket not started</span>
             <span class="member-chip">Open box eligible</span>
           </div>
+          <div class="member-detail-grid" id="member-details"></div>
         </div>
       </div>
       <div class="tool-panel">
@@ -483,13 +509,13 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
         </div>
         <div class="tool-body">
           <div class="attach-grid">
-            <button class="attach-card on" data-plan="plus" type="button">
-              <img class="attach-img" src="assets/my-bestbuy-plus.png" alt="My Best Buy Plus"/>
+            <button class="attach-card plus on" data-plan="plus" type="button">
+              <div class="plan-mark plus" aria-hidden="true"><span class="my">my</span><span class="best">BEST BUY</span><span class="tier">plus</span></div>
               <div class="attach-name">My Best Buy Plus</div>
-              <div class="attach-price">$49.99 / yr</div>
+              <div class="attach-price">$29.99 / yr</div>
             </button>
-            <button class="attach-card" data-plan="total" type="button">
-              <img class="attach-img" src="assets/my-bestbuy-total.png" alt="My Best Buy Total"/>
+            <button class="attach-card total" data-plan="total" type="button">
+              <div class="plan-mark total" aria-hidden="true"><span class="my">my</span><span class="best">BEST BUY</span><span class="tier">total</span></div>
               <div class="attach-name">My Best Buy Total</div>
               <div class="attach-price">$179.99 / yr</div>
             </button>
@@ -859,10 +885,13 @@ document.getElementById("settings-btn").addEventListener("click", () => {
 document.getElementById("member-lookup-btn").addEventListener("click", () => {
   const raw = document.getElementById("member-input").value.trim();
   memberSession = {
-    name: "Demo Member",
+    name: "Jordan M.",
     handle: raw || "802-555-0136",
-    tier: "My Best Buy",
+    tier: "My Best Buy Plus",
+    card: "Best Buy Card on file",
+    cardType: "Visa ending 4421",
     rewards: "$15 rewards",
+    financing: "12-mo financing eligible",
   };
   renderSalesTools();
   showToast("Demo member basket opened");
@@ -1148,7 +1177,7 @@ function findItem(id) {
 }
 
 function membershipCost() {
-  return memberPlan === "total" ? 179.99 : 49.99;
+  return memberPlan === "total" ? 179.99 : 29.99;
 }
 
 function membershipName() {
@@ -1161,18 +1190,48 @@ function renderSalesTools() {
 
   const memberState = document.getElementById("member-state");
   const memberMini = document.getElementById("member-mini");
+  const memberDetails = document.getElementById("member-details");
   if (memberSession) {
     memberState.textContent = "Verified";
     memberMini.innerHTML = `
       <span class="member-chip">${memberSession.name}</span>
-      <span class="member-chip">${memberSession.rewards}</span>
+      <span class="member-chip">${memberSession.tier}</span>
+      <span class="member-chip">${memberSession.card}</span>
       <span class="member-chip">Basket ready</span>
+    `;
+    memberDetails.innerHTML = `
+      <div class="member-detail">
+        <div class="member-detail-label">Membership</div>
+        <div class="member-detail-value good">${memberSession.tier}</div>
+      </div>
+      <div class="member-detail">
+        <div class="member-detail-label">Best Buy Card</div>
+        <div class="member-detail-value good">Active · ${memberSession.cardType}</div>
+      </div>
+      <div class="member-detail">
+        <div class="member-detail-label">Rewards</div>
+        <div class="member-detail-value">${memberSession.rewards}</div>
+      </div>
+      <div class="member-detail">
+        <div class="member-detail-label">Offer</div>
+        <div class="member-detail-value">${memberSession.financing}</div>
+      </div>
     `;
   } else {
     memberState.textContent = "Guest";
     memberMini.innerHTML = `
       <span class="member-chip">Basket not started</span>
       <span class="member-chip">Open box eligible</span>
+    `;
+    memberDetails.innerHTML = `
+      <div class="member-detail">
+        <div class="member-detail-label">Membership</div>
+        <div class="member-detail-value">Lookup needed</div>
+      </div>
+      <div class="member-detail">
+        <div class="member-detail-label">Best Buy Card</div>
+        <div class="member-detail-value">Unknown</div>
+      </div>
     `;
   }
 
