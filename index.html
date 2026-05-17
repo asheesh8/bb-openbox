@@ -137,7 +137,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 
 /* ── SALES WORKBENCH ── */
 .sales-workbench { background: var(--white); border-bottom: 1px solid var(--line); }
-.sales-workbench-in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: grid; grid-template-columns: 1fr 1fr 1.1fr; gap: 12px; align-items: stretch; }
+.sales-workbench-in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: grid; grid-template-columns: .9fr 1fr 1fr 1.1fr; gap: 12px; align-items: stretch; }
 .tool-panel { border: 1px solid var(--line); border-radius: var(--r12); background: var(--white); overflow: hidden; min-width: 0; }
 .tool-panel-h { min-height: 38px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line-2); }
 .tool-title { font-size: 12px; font-weight: 800; color: var(--ink); letter-spacing: .02em; }
@@ -195,6 +195,13 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .quote-actions { display: flex; gap: 8px; }
 .quote-actions .mini-btn { flex: 1; }
 .mini-btn.light { background: var(--white); color: var(--blue); }
+.store-select { width: 100%; height: 38px; border: 1.5px solid var(--line); border-radius: var(--r8); padding: 0 10px; font-family: inherit; font-size: 12px; font-weight: 700; color: var(--ink); background: var(--surface); outline: none; margin-bottom: 10px; }
+.store-select:focus { border-color: var(--blue); background: var(--white); }
+.store-facts { display: grid; gap: 7px; }
+.store-fact { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r8); padding: 8px; font-size: 12px; }
+.store-fact span { color: var(--ink-3); font-weight: 700; }
+.store-fact strong { color: var(--ink); font-weight: 800; text-align: right; }
+.quote-total-row.tax strong { color: var(--blue); }
 
 /* DEPT FILTERS */
 .dept-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
@@ -481,6 +488,16 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   <!-- SALES WORKBENCH -->
   <section class="sales-workbench" aria-label="Sales tools">
     <div class="sales-workbench-in">
+      <div class="tool-panel">
+        <div class="tool-panel-h">
+          <span class="tool-title">Store Context</span>
+          <span class="tool-kicker" id="store-kicker">7.00% tax</span>
+        </div>
+        <div class="tool-body">
+          <select class="store-select" id="store-select" aria-label="Store selector"></select>
+          <div class="store-facts" id="store-facts"></div>
+        </div>
+      </div>
       <div class="tool-panel">
         <div class="tool-panel-h">
           <span class="tool-title">Member Lookup</span>
@@ -782,6 +799,13 @@ const DEPTS = [
   },
 ];
 
+const STORES = [
+  { id: "360", label: "Store 360 · Williston, VT", city: "Williston", state: "VT", bbStoreId: "360", tax: 0.07, pickup: "Aisle pickup + curbside", region: "Burlington market" },
+  { id: "578", label: "Store 578 · South Burlington, VT", city: "South Burlington", state: "VT", bbStoreId: "578", tax: 0.07, pickup: "Store pickup", region: "Burlington market" },
+  { id: "480", label: "Store 480 · West Lebanon, NH", city: "West Lebanon", state: "NH", bbStoreId: "480", tax: 0, pickup: "Store pickup", region: "Upper Valley" },
+  { id: "597", label: "Store 597 · Plattsburgh, NY", city: "Plattsburgh", state: "NY", bbStoreId: "597", tax: 0.08, pickup: "Store pickup", region: "North Country" },
+];
+
 const DEMO_ITEMS = [
   {sku:"6534632",name:"Apple MacBook Pro 14\" M3 Pro 18GB/512GB",desc:"M3 Pro chip, 18GB unified memory, Liquid Retina XDR, ProRes",category:"laptops",reg:1999.99,sale:1399.99,cond:"excellent",rating:4.9,reviews:447,img:""},
   {sku:"6499198",name:"Dell XPS 15\" OLED Touch i7-13700H 16GB/512GB",desc:"Intel Core i7 13th Gen, NVIDIA RTX 4060, OLED touch 3.5K",category:"laptops",reg:1899.99,sale:1099.99,cond:"excellent",rating:4.6,reviews:312,img:""},
@@ -816,7 +840,8 @@ let searchVal = "";
 let sortVal = "savings";
 let expandedId = null;
 let lastFetch = null;
-let authBadge = "Store 360";
+let activeStoreId = localStorage.getItem("bb_store") || "360";
+let authRole = "";
 let compareIds = [];
 let quoteIds = [];
 let memberPlan = "plus";
@@ -870,11 +895,28 @@ document.getElementById("sso-demo-btn").addEventListener("click", async () => {
   status.classList.add("show");
   btn.textContent = "SSO demo verified";
   setTimeout(() => {
-    authBadge = "Store 360 · Sales";
+    authRole = "Sales";
     document.getElementById("gate").style.display = "none";
     startApp(true);
     showToast("Demo SSO session started");
   }, 650);
+});
+
+document.getElementById("store-select").addEventListener("change", async e => {
+  activeStoreId = e.target.value;
+  localStorage.setItem("bb_store", activeStoreId);
+  updateStoreContext();
+  renderSalesTools();
+  if (!IS_DEMO && ALL_ITEMS.length) {
+    const btn = document.getElementById("refresh-btn");
+    btn.classList.add("spin");
+    ALL_ITEMS = await fetchAll();
+    btn.classList.remove("spin");
+    lastFetch = new Date();
+    updateLiveIndicator();
+    render();
+    showToast(`Inventory scoped to ${getActiveStore().city}`);
+  }
 });
 
 document.getElementById("settings-btn").addEventListener("click", () => {
@@ -942,9 +984,10 @@ async function startApp(demo) {
 
   loading.style.display = "none";
   document.getElementById("app").classList.add("on");
-  document.getElementById("tb-store").textContent = authBadge;
   lastFetch = new Date();
 
+  buildStoreSelector();
+  updateStoreContext();
   buildDeptTabs();
   resetFilters();
   buildDeptFilters();
@@ -959,14 +1002,15 @@ async function startApp(demo) {
 async function fetchAll() {
   const results = [];
   const seen = new Set();
+  const store = getActiveStore();
 
   const allCatIds = [...new Set(DEPTS.flatMap(d => d.cats))];
 
-  document.getElementById("load-cat").textContent = "Fetching all departments…";
+  document.getElementById("load-cat").textContent = `Fetching ${store.city} open box inventory…`;
 
   await Promise.all(allCatIds.map(async catId => {
     try {
-      const r = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=${catId})?apiKey=${API_KEY}&pageSize=100`);
+      const r = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=${catId})?apiKey=${API_KEY}&pageSize=100&storeId=${store.bbStoreId}`);
       if (!r.ok) return;
       const data = await r.json();
 
@@ -1032,6 +1076,31 @@ document.getElementById("refresh-btn").addEventListener("click", async () => {
   render();
   showToast("Inventory refreshed!");
 });
+
+// ─────────────────────────────────────────────
+//  STORE CONTEXT
+// ─────────────────────────────────────────────
+function getActiveStore() {
+  return STORES.find(s => s.id === activeStoreId) || STORES[0];
+}
+
+function buildStoreSelector() {
+  const select = document.getElementById("store-select");
+  select.innerHTML = STORES.map(s => `<option value="${s.id}"${s.id === activeStoreId ? " selected" : ""}>${s.label}</option>`).join("");
+}
+
+function updateStoreContext() {
+  const store = getActiveStore();
+  const role = authRole ? ` · ${authRole}` : "";
+  document.getElementById("tb-store").textContent = `Store ${store.bbStoreId}${role}`;
+  document.getElementById("store-kicker").textContent = `${(store.tax * 100).toFixed(2)}% tax`;
+  document.getElementById("store-facts").innerHTML = `
+    <div class="store-fact"><span>Location</span><strong>${store.city}, ${store.state}</strong></div>
+    <div class="store-fact"><span>Store ID</span><strong>${store.bbStoreId}</strong></div>
+    <div class="store-fact"><span>Sales tax</span><strong>${(store.tax * 100).toFixed(2)}%</strong></div>
+    <div class="store-fact"><span>Fulfillment</span><strong>${store.pickup}</strong></div>
+  `;
+}
 
 // ─────────────────────────────────────────────
 //  DEPT TABS
@@ -1260,11 +1329,14 @@ function renderSalesTools() {
   const subtotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
   const savings = quoteItems.reduce((sum, i) => sum + i.savings, 0);
   const planCost = quoteItems.length ? membershipCost() : 0;
-  const estimated = subtotal + planCost;
+  const taxable = subtotal + planCost;
+  const tax = taxable * getActiveStore().tax;
+  const estimated = taxable + tax;
   document.getElementById("quote-kicker").textContent = `${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"}`;
   document.getElementById("quote-totals").innerHTML = `
     <div class="quote-total-row"><span>Products</span><strong>$${subtotal.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>${membershipName()}</span><strong>$${planCost.toFixed(2)}</strong></div>
+    <div class="quote-total-row tax"><span>Est. tax · ${getActiveStore().city} ${(getActiveStore().tax * 100).toFixed(2)}%</span><strong>$${tax.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>Customer saves</span><strong>$${savings.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>Estimated basket</span><strong>$${estimated.toFixed(2)}</strong></div>
   `;
@@ -1291,11 +1363,15 @@ function buildQuoteText() {
   const lines = quoteItems.map(i => `${i.name} - $${i.sale.toFixed(2)} open box (${i.cond}), save $${i.savings.toFixed(2)}. SKU ${i.sku}`);
   const subtotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
   const savings = quoteItems.reduce((sum, i) => sum + i.savings, 0);
+  const store = getActiveStore();
+  const taxable = subtotal + membershipCost();
+  const tax = taxable * store.tax;
   return [
-    `Open Box Finder quote${memberSession ? ` for ${memberSession.name}` : ""}:`,
+    `Open Box Finder quote${memberSession ? ` for ${memberSession.name}` : ""} · Store ${store.bbStoreId} ${store.city}, ${store.state}:`,
     ...lines,
     `${membershipName()}: $${membershipCost().toFixed(2)}/yr`,
-    `Estimated basket: $${(subtotal + membershipCost()).toFixed(2)}`,
+    `Estimated tax (${(store.tax * 100).toFixed(2)}%): $${tax.toFixed(2)}`,
+    `Estimated basket: $${(taxable + tax).toFixed(2)}`,
     `Open box savings: $${savings.toFixed(2)}`,
   ].join("\n");
 }
