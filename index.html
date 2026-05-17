@@ -178,6 +178,11 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .attach-card.total .attach-name { color: var(--white); }
 .attach-price { font-size: 11px; color: var(--ink-3); font-weight: 600; }
 .attach-card.total .attach-price { color: rgba(255,255,255,.68); }
+.attach-benefits { margin-top: 10px; border: 1px solid var(--line); border-radius: var(--r8); background: var(--white); padding: 10px 12px; }
+.attach-benefit-title { font-size: 11px; font-weight: 900; color: var(--ink); margin-bottom: 7px; letter-spacing: .02em; }
+.attach-benefit-list { list-style: none; display: grid; gap: 6px; }
+.attach-benefit-list li { position: relative; padding-left: 14px; font-size: 12px; line-height: 1.35; color: var(--ink-2); font-weight: 600; }
+.attach-benefit-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
 .member-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
 .member-detail { border: 1px solid var(--line); background: var(--white); border-radius: var(--r8); padding: 8px; }
 .member-detail-label { font-size: 9px; font-weight: 800; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 4px; }
@@ -585,6 +590,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
               <div class="attach-price">$179.99 / yr</div>
             </button>
           </div>
+          <div class="attach-benefits" id="attach-benefits"></div>
         </div>
       </div>
       <div class="tool-panel" id="quote-panel">
@@ -1322,9 +1328,32 @@ function membershipName() {
   return memberPlan === "total" ? "My Best Buy Total" : "My Best Buy Plus";
 }
 
+function membershipBenefits() {
+  if (memberPlan === "total") {
+    return [
+      "24/7 tech support for covered products",
+      "Protection plans included on eligible purchases",
+      "VIP member pricing and exclusive deals",
+      "Extended 60-day return window",
+    ];
+  }
+  return [
+    "Member-only pricing and exclusive deals",
+    "Extended 60-day return window",
+    "Free 2-day shipping on eligible items",
+    "Good attach for open box savings shoppers",
+  ];
+}
+
 function renderSalesTools() {
   document.querySelectorAll(".attach-card").forEach(btn => btn.classList.toggle("on", btn.dataset.plan === memberPlan));
   document.getElementById("attach-kicker").textContent = memberPlan === "total" ? "Total selected" : "Plus selected";
+  document.getElementById("attach-benefits").innerHTML = `
+    <div class="attach-benefit-title">${membershipName()} key benefits</div>
+    <ul class="attach-benefit-list">
+      ${membershipBenefits().map(b => `<li>${b}</li>`).join("")}
+    </ul>
+  `;
 
   const memberState = document.getElementById("member-state");
   const memberMini = document.getElementById("member-mini");
