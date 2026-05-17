@@ -207,6 +207,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .store-fact span { color: var(--ink-3); font-weight: 700; }
 .store-fact strong { color: var(--ink); font-weight: 800; text-align: right; }
 .quote-total-row.tax strong { color: var(--blue); }
+.quote-dock { display: none; }
 
 /* DEPT FILTERS */
 .dept-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
@@ -368,34 +369,64 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .gate-card { border-radius: 28px; padding: 28px 18px; margin-top: 16px; }
   .app.on { width: min(100%, 430px); margin: 0 auto; min-height: 100vh; border-left: 1px solid rgba(255,255,255,.08); border-right: 1px solid rgba(255,255,255,.08); box-shadow: 0 0 0 10px #05070A; position: relative; }
   .ios-island { display: block; position: sticky; top: 8px; z-index: 500; width: 118px; height: 31px; background: #05070A; border-radius: 18px; margin: 8px auto -39px; box-shadow: inset 18px 0 0 rgba(255,255,255,.03); }
-  .topbar { height: 76px; padding-top: 24px; position: sticky; top: 0; }
+  .topbar { height: 76px; padding-top: 24px; position: sticky; top: 0; box-shadow: 0 1px 0 rgba(255,255,255,.08); }
   .topbar-in { padding: 0 14px; }
   .bb-mark.small { font-size: 11px; padding: 5px 7px; }
   .bb-mark.small .bb-tag { width: 16px; height: 11px; }
-  .tb-name { font-size: 13px; }
-  .tb-store { max-width: 122px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tb-name { display: none; }
+  .tb-sep { display: none; }
+  .tb-store { max-width: 112px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tb-btn { width: 36px; height: 36px; font-size: 16px; }
   .dept-bar-in { padding: 0 10px; }
-  .dept-tab { padding: 10px 13px 8px; }
+  .dept-tab { padding: 10px 13px 8px; min-width: 72px; }
+  .dept-tab .dt-label { font-size: 10px; }
   .controls { padding: 10px 12px; }
   .search-row { flex-wrap: wrap; }
   .search-box { flex-basis: 100%; }
+  .search-inp { height: 44px; font-size: 16px; border-radius: 10px; }
   .ctrl-btn { flex: 1; justify-content: center; }
-  .filter-group { overflow-x: auto; max-width: 100%; padding-bottom: 2px; }
-  .filter-group::-webkit-scrollbar { display: none; }
+  .dept-filters { flex-wrap: nowrap; overflow-x: auto; gap: 8px; padding-bottom: 2px; scroll-snap-type: x proximity; }
+  .dept-filters::-webkit-scrollbar { display: none; }
+  .filter-group { overflow: visible; flex: 0 0 auto; scroll-snap-align: start; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+  .filter-group-label { display: none; }
+  .pill-btn { height: 32px; padding: 0 11px; font-size: 12px; background: transparent; border-color: transparent; }
   .filter-sep { display: none; }
-  .sales-workbench-in { padding: 10px 12px; gap: 10px; }
-  .tool-panel { border-radius: 10px; }
+  .sort-select { height: 40px; flex: 0 0 auto; border-radius: 999px; font-size: 13px; }
+  .sales-workbench { background: #EEF3F8; }
+  .sales-workbench-in { display: flex; overflow-x: auto; padding: 12px; gap: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .sales-workbench-in::-webkit-scrollbar { display: none; }
+  .tool-panel { border-radius: 12px; flex: 0 0 86%; scroll-snap-align: start; box-shadow: 0 2px 10px rgba(15,25,35,.04); }
+  .tool-panel-h { min-height: 42px; padding: 11px 12px; }
+  .tool-title { font-size: 13px; }
+  .tool-body { padding: 12px; }
+  .store-select, .member-input { height: 42px; font-size: 16px; }
+  .mini-btn { height: 42px; font-size: 13px; }
   .mybb-wordmark { font-size: 19px; }
   .member-detail-grid { grid-template-columns: 1fr; }
-  .attach-card { min-height: 104px; }
-  .results-header { padding: 12px 14px 8px; }
-  .grid-wrap { padding: 0 12px 22px; }
+  .attach-card { min-height: 112px; }
+  .compare-item, .quote-row, .store-fact, .member-detail { padding: 10px; }
+  .quote-total-row { font-size: 13px; }
+  .quote-total-row strong { font-size: 16px; }
+  .results-header { padding: 14px 14px 10px; align-items: flex-start; gap: 8px; }
+  .results-count { font-size: 14px; line-height: 1.3; }
+  .live-dot { white-space: nowrap; margin-top: 2px; }
+  .grid-wrap { padding: 0 12px 96px; }
   .pcard { border-radius: 12px; }
-  .pc-img-wrap { height: 142px; }
+  .pc-img-wrap { height: 148px; }
+  .pc-body { padding: 15px; }
+  .pc-name { font-size: 15px; line-height: 1.35; }
+  .pc-sale { font-size: 28px; }
+  .pc-pricing { align-items: flex-start; gap: 10px; }
+  .pc-save-pill { white-space: normal; text-align: right; max-width: 112px; line-height: 1.25; }
   .pc-footer { flex-wrap: wrap; }
-  .pc-act { flex-basis: 50%; }
+  .pc-act { flex-basis: 50%; height: 48px; font-size: 12px; }
   .pc-act:nth-child(3) { border-left: none; border-top: 1px solid var(--line-2); }
   .pc-act:nth-child(4) { border-top: 1px solid var(--line-2); }
+  .quote-dock { position: fixed; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 520; width: min(406px, calc(100% - 22px)); background: var(--ink); color: var(--white); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 10px 10px 10px 14px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; box-shadow: 0 14px 40px rgba(0,0,0,.34); }
+  .quote-dock-title { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: rgba(255,255,255,.58); margin-bottom: 2px; }
+  .quote-dock-main { font-size: 15px; font-weight: 800; line-height: 1.2; }
+  .quote-dock-sub { font-size: 11px; color: rgba(255,255,255,.66); margin-top: 2px; }
+  .quote-dock-btn { height: 40px; border: none; border-radius: 12px; background: var(--yellow); color: var(--blue); font-family: inherit; font-size: 12px; font-weight: 900; padding: 0 12px; cursor: pointer; }
   .install-prompt { bottom: 12px; grid-template-columns: 38px 1fr; }
   .install-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
@@ -557,7 +588,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
           </div>
         </div>
       </div>
-      <div class="tool-panel">
+      <div class="tool-panel" id="quote-panel">
         <div class="tool-panel-h">
           <span class="tool-title">Compare + Quote</span>
           <span class="tool-kicker" id="quote-kicker">0 items</span>
@@ -592,6 +623,14 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   </div>
 
   <div class="app-footer">Built by <a href="https://ashish-portfolio-rust.vercel.app" target="_blank">Ashish Subedi</a> · Best Buy Store 360, Williston VT</div>
+</div>
+<div class="quote-dock" id="quote-dock" aria-live="polite">
+  <div>
+    <div class="quote-dock-title">Customer Basket</div>
+    <div class="quote-dock-main" id="quote-dock-main">No items added</div>
+    <div class="quote-dock-sub" id="quote-dock-sub">Tap Basket on a product to start</div>
+  </div>
+  <button class="quote-dock-btn" id="quote-dock-btn" type="button">Quote</button>
 </div>
 
 <!-- AI SHEET -->
@@ -992,6 +1031,10 @@ document.getElementById("copy-quote-btn").addEventListener("click", () => {
   showToast("Quote copied for customer recap");
 });
 
+document.getElementById("quote-dock-btn").addEventListener("click", () => {
+  document.getElementById("quote-panel").scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+});
+
 async function verifyKey(k) {
   try {
     const r = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=abcat0507002)?apiKey=${k}&pageSize=1`);
@@ -1371,6 +1414,12 @@ function renderSalesTools() {
     <div class="quote-total-row"><span>Customer saves</span><strong>$${savings.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>Estimated basket</span><strong>$${estimated.toFixed(2)}</strong></div>
   `;
+  document.getElementById("quote-dock-main").textContent = quoteItems.length
+    ? `${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"} · $${estimated.toFixed(2)}`
+    : "No items added";
+  document.getElementById("quote-dock-sub").textContent = quoteItems.length
+    ? `Save $${savings.toFixed(2)} · ${getActiveStore().city} tax included`
+    : "Tap Basket on a product to start";
 
   document.querySelectorAll("[data-remove-compare]").forEach(btn => {
     btn.addEventListener("click", () => {
