@@ -195,6 +195,12 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .card-network { margin-left: auto; font-size: 16px; font-weight: 900; letter-spacing: -.02em; color: rgba(255,255,255,.9); }
 .card-offer-main { font-size: 15px; font-weight: 900; line-height: 1.2; margin-top: 12px; }
 .card-offer-sub { font-size: 11px; line-height: 1.35; color: rgba(255,255,255,.72); margin-top: 4px; }
+.card-offer-main.big { font-size: 18px; }
+.card-value-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+.card-value { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r8); padding: 9px; }
+.card-value-label { font-size: 9px; font-weight: 900; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 4px; }
+.card-value-main { font-size: 15px; font-weight: 900; color: var(--ink); line-height: 1.1; }
+.card-value-sub { font-size: 10px; color: var(--ink-3); line-height: 1.3; margin-top: 4px; }
 .card-benefit-list { list-style: none; display: grid; gap: 7px; }
 .card-benefit-list li { position: relative; padding-left: 15px; font-size: 12px; font-weight: 650; line-height: 1.35; color: var(--ink-2); }
 .card-benefit-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--yellow-dim); }
@@ -1370,9 +1376,24 @@ function renderCardOffer() {
   const body = document.getElementById("card-offer-body");
   const quoteItems = quoteIds.map(findItem).filter(Boolean);
   const basketTotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
+  const purchaseBase = quoteItems.length ? basketTotal : 999.99;
+  const monthly12 = purchaseBase / 12;
+  const rewardCredit = purchaseBase * 0.10;
   const purchaseLine = quoteItems.length
-    ? `Current product basket: $${basketTotal.toFixed(2)} before tax and membership.`
-    : "Add a product to show purchase-specific financing value.";
+    ? `Based on this product basket: $${basketTotal.toFixed(2)} before tax and membership.`
+    : "Add a product to show exact purchase-specific numbers.";
+  const financingLabel = quoteItems.length
+    ? `$${monthly12.toFixed(2)}/mo`
+    : "Example: $83.33/mo";
+  const financingSub = quoteItems.length
+    ? "for 12 months, if qualifying no-interest financing applies"
+    : "on a $999.99 purchase, if qualifying financing applies";
+  const rewardsLabel = quoteItems.length
+    ? `$${rewardCredit.toFixed(2)}`
+    : "Example: $100.00";
+  const rewardsSub = quoteItems.length
+    ? "estimated 10% back in store credit on this product basket"
+    : "estimated 10% back on a $999.99 purchase";
   if (memberSession?.hasCard) {
     kicker.textContent = "Card active";
     body.innerHTML = `
@@ -1383,14 +1404,26 @@ function renderCardOffer() {
           <span class="card-network">VISA</span>
         </div>
         <div>
-          <div class="card-offer-main">Active card on file</div>
+          <div class="card-offer-main big">Card options for this purchase</div>
           <div class="card-offer-sub">${memberSession.cardType} · ${purchaseLine}</div>
         </div>
       </div>
+      <div class="card-value-grid">
+        <div class="card-value">
+          <div class="card-value-label">Financing</div>
+          <div class="card-value-main">${financingLabel}</div>
+          <div class="card-value-sub">${financingSub}</div>
+        </div>
+        <div class="card-value">
+          <div class="card-value-label">Store credit</div>
+          <div class="card-value-main">${rewardsLabel}</div>
+          <div class="card-value-sub">${rewardsSub}</div>
+        </div>
+      </div>
       <ul class="card-benefit-list">
-        <li>Use financing on this basket if the customer wants lower monthly payments</li>
-        <li>Pairs with open box savings, Plus/Total, and qualifying promos</li>
-        <li>Good for larger TV, appliance, and computer purchases</li>
+        <li>Customer can choose financing or rewards, depending on eligible offer</li>
+        <li>Useful if monthly payment matters more than lowest today total</li>
+        <li>Store credit estimate can help with accessories or future purchases</li>
       </ul>
     `;
   } else {
@@ -1403,14 +1436,26 @@ function renderCardOffer() {
           <span class="card-network">citi</span>
         </div>
         <div>
-          <div class="card-offer-main">${memberSession ? "Card offer available" : "Lookup customer to check card status"}</div>
+          <div class="card-offer-main big">${memberSession ? "If approved, this purchase could be" : "Lookup customer to show card math"}</div>
           <div class="card-offer-sub">${purchaseLine}</div>
         </div>
       </div>
+      <div class="card-value-grid">
+        <div class="card-value">
+          <div class="card-value-label">Financing</div>
+          <div class="card-value-main">${financingLabel}</div>
+          <div class="card-value-sub">${financingSub}</div>
+        </div>
+        <div class="card-value">
+          <div class="card-value-label">Store credit</div>
+          <div class="card-value-main">${rewardsLabel}</div>
+          <div class="card-value-sub">${rewardsSub}</div>
+        </div>
+      </div>
       <ul class="card-benefit-list">
-        <li>Financing can make this purchase easier to close today</li>
-        <li>Rewards value can help offset future accessories or services</li>
-        <li>Works best when open box savings creates room for attach</li>
+        <li>Show monthly payment when budget is the objection</li>
+        <li>Show 10% back when future accessories or services are likely</li>
+        <li>Amounts are estimates and depend on approval and qualifying offers</li>
       </ul>
     `;
   }
