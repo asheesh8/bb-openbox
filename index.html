@@ -188,16 +188,16 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .member-detail-label { font-size: 9px; font-weight: 800; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 4px; }
 .member-detail-value { font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.25; }
 .member-detail-value.good { color: var(--green); }
-.card-offer { border: 1px solid var(--line); border-radius: var(--r8); background: linear-gradient(135deg, #111827, #243244); color: var(--white); padding: 12px; margin-bottom: 10px; min-height: 92px; display: flex; flex-direction: column; justify-content: space-between; }
+.card-offer { border: 1px solid #0A3A74; border-radius: var(--r8); background: linear-gradient(135deg, #082B5F 0%, #0E427B 58%, #071D42 58%, #112B5A 100%); color: var(--white); padding: 12px; margin-bottom: 10px; min-height: 104px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: inset 0 0 0 1px rgba(255,241,0,.18); }
 .card-offer-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .card-chip { width: 30px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, #E8C66A, #FFF0A8); }
-.card-brand { font-size: 11px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.68); }
+.card-brand { font-size: 11px; font-weight: 900; letter-spacing: .03em; text-transform: uppercase; color: rgba(255,255,255,.9); }
+.card-network { margin-left: auto; font-size: 16px; font-weight: 900; letter-spacing: -.02em; color: rgba(255,255,255,.9); }
 .card-offer-main { font-size: 15px; font-weight: 900; line-height: 1.2; margin-top: 12px; }
 .card-offer-sub { font-size: 11px; line-height: 1.35; color: rgba(255,255,255,.72); margin-top: 4px; }
-.card-benefit-list { list-style: none; display: grid; gap: 7px; margin-bottom: 10px; }
+.card-benefit-list { list-style: none; display: grid; gap: 7px; }
 .card-benefit-list li { position: relative; padding-left: 15px; font-size: 12px; font-weight: 650; line-height: 1.35; color: var(--ink-2); }
 .card-benefit-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--yellow-dim); }
-.card-cta { width: 100%; height: 38px; border: 1.5px solid var(--blue); border-radius: var(--r8); background: var(--blue); color: var(--white); font-family: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
 .compare-slots { display: grid; gap: 8px; }
 .compare-empty { border: 1px dashed var(--line); border-radius: var(--r8); min-height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; text-align: center; padding: 8px; }
 .compare-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
@@ -1368,50 +1368,52 @@ function membershipBenefits() {
 function renderCardOffer() {
   const kicker = document.getElementById("card-kicker");
   const body = document.getElementById("card-offer-body");
+  const quoteItems = quoteIds.map(findItem).filter(Boolean);
+  const basketTotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
+  const purchaseLine = quoteItems.length
+    ? `Current product basket: $${basketTotal.toFixed(2)} before tax and membership.`
+    : "Add a product to show purchase-specific financing value.";
   if (memberSession?.hasCard) {
     kicker.textContent = "Card active";
     body.innerHTML = `
       <div class="card-offer">
         <div class="card-offer-top">
-          <span class="card-brand">Best Buy Card</span>
+          <span class="card-brand">my Best Buy Card</span>
           <span class="card-chip"></span>
+          <span class="card-network">VISA</span>
         </div>
         <div>
           <div class="card-offer-main">Active card on file</div>
-          <div class="card-offer-sub">${memberSession.cardType} · ${memberSession.financing}</div>
+          <div class="card-offer-sub">${memberSession.cardType} · ${purchaseLine}</div>
         </div>
       </div>
       <ul class="card-benefit-list">
-        <li>Use financing offer if the customer wants lower monthly payments</li>
-        <li>Can pair with open box savings and membership attach</li>
-        <li>Verify ID and payment preference at checkout</li>
+        <li>Use financing on this basket if the customer wants lower monthly payments</li>
+        <li>Pairs with open box savings, Plus/Total, and qualifying promos</li>
+        <li>Good for larger TV, appliance, and computer purchases</li>
       </ul>
-      <button class="card-cta" type="button" id="card-demo-btn">Add financing note</button>
     `;
   } else {
     kicker.textContent = memberSession ? "Offer available" : "Check account";
     body.innerHTML = `
       <div class="card-offer">
         <div class="card-offer-top">
-          <span class="card-brand">Best Buy Card</span>
+          <span class="card-brand">my Best Buy Card</span>
           <span class="card-chip"></span>
+          <span class="card-network">citi</span>
         </div>
         <div>
-          <div class="card-offer-main">${memberSession ? "Customer does not have a card" : "Lookup customer to check card status"}</div>
-          <div class="card-offer-sub">Show card offer when no active Best Buy Card is found.</div>
+          <div class="card-offer-main">${memberSession ? "Card offer available" : "Lookup customer to check card status"}</div>
+          <div class="card-offer-sub">${purchaseLine}</div>
         </div>
       </div>
       <ul class="card-benefit-list">
-        <li>Flexible financing options on qualifying purchases</li>
-        <li>Rewards value can help close larger baskets</li>
-        <li>Useful when open box savings frees up budget for attach</li>
+        <li>Financing can make this purchase easier to close today</li>
+        <li>Rewards value can help offset future accessories or services</li>
+        <li>Works best when open box savings creates room for attach</li>
       </ul>
-      <button class="card-cta" type="button" id="card-demo-btn">${memberSession ? "Present card offer" : "Lookup first"}</button>
     `;
   }
-  document.getElementById("card-demo-btn").addEventListener("click", () => {
-    showToast(memberSession?.hasCard ? "Financing note added to quote" : "Card offer ready for customer");
-  });
 }
 
 function renderSalesTools() {
