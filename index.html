@@ -142,7 +142,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 
 /* ── SALES WORKBENCH ── */
 .sales-workbench { background: var(--white); border-bottom: 1px solid var(--line); }
-.sales-workbench-in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: grid; grid-template-columns: .9fr 1fr 1fr 1.1fr; gap: 12px; align-items: stretch; }
+.sales-workbench-in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: grid; grid-template-columns: .9fr 1fr 1fr 1fr 1.1fr; gap: 12px; align-items: stretch; }
 .tool-panel { border: 1px solid var(--line); border-radius: var(--r12); background: var(--white); overflow: hidden; min-width: 0; }
 .tool-panel-h { min-height: 38px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line-2); }
 .tool-title { font-size: 12px; font-weight: 800; color: var(--ink); letter-spacing: .02em; }
@@ -188,6 +188,16 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .member-detail-label { font-size: 9px; font-weight: 800; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 4px; }
 .member-detail-value { font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.25; }
 .member-detail-value.good { color: var(--green); }
+.card-offer { border: 1px solid var(--line); border-radius: var(--r8); background: linear-gradient(135deg, #111827, #243244); color: var(--white); padding: 12px; margin-bottom: 10px; min-height: 92px; display: flex; flex-direction: column; justify-content: space-between; }
+.card-offer-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card-chip { width: 30px; height: 22px; border-radius: 5px; background: linear-gradient(135deg, #E8C66A, #FFF0A8); }
+.card-brand { font-size: 11px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.68); }
+.card-offer-main { font-size: 15px; font-weight: 900; line-height: 1.2; margin-top: 12px; }
+.card-offer-sub { font-size: 11px; line-height: 1.35; color: rgba(255,255,255,.72); margin-top: 4px; }
+.card-benefit-list { list-style: none; display: grid; gap: 7px; margin-bottom: 10px; }
+.card-benefit-list li { position: relative; padding-left: 15px; font-size: 12px; font-weight: 650; line-height: 1.35; color: var(--ink-2); }
+.card-benefit-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--yellow-dim); }
+.card-cta { width: 100%; height: 38px; border: 1.5px solid var(--blue); border-radius: var(--r8); background: var(--blue); color: var(--white); font-family: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
 .compare-slots { display: grid; gap: 8px; }
 .compare-empty { border: 1px dashed var(--line); border-radius: var(--r8); min-height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; text-align: center; padding: 8px; }
 .compare-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
@@ -593,6 +603,13 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
           <div class="attach-benefits" id="attach-benefits"></div>
         </div>
       </div>
+      <div class="tool-panel">
+        <div class="tool-panel-h">
+          <span class="tool-title">Best Buy Card</span>
+          <span class="tool-kicker" id="card-kicker">Check account</span>
+        </div>
+        <div class="tool-body" id="card-offer-body"></div>
+      </div>
       <div class="tool-panel" id="quote-panel">
         <div class="tool-panel-h">
           <span class="tool-title">Compare + Quote</span>
@@ -914,6 +931,7 @@ let quoteIds = [];
 let memberPlan = "plus";
 let memberSession = null;
 let deferredInstallPrompt = null;
+let demoCardToggle = false;
 
 // ─────────────────────────────────────────────
 //  BOOT
@@ -997,14 +1015,16 @@ document.getElementById("settings-btn").addEventListener("click", () => {
 
 document.getElementById("member-lookup-btn").addEventListener("click", () => {
   const raw = document.getElementById("member-input").value.trim();
+  demoCardToggle = !demoCardToggle;
   memberSession = {
     name: "Jordan M.",
     handle: raw || "802-555-0136",
     tier: "My Best Buy Plus",
-    card: "Best Buy Card on file",
-    cardType: "Visa ending 4421",
+    hasCard: demoCardToggle,
+    card: demoCardToggle ? "Best Buy Card on file" : "No Best Buy Card",
+    cardType: demoCardToggle ? "Visa ending 4421" : "",
     rewards: "$15 rewards",
-    financing: "12-mo financing eligible",
+    financing: demoCardToggle ? "12-mo financing eligible" : "Card offer available",
   };
   renderSalesTools();
   showToast("Demo member basket opened");
@@ -1345,6 +1365,55 @@ function membershipBenefits() {
   ];
 }
 
+function renderCardOffer() {
+  const kicker = document.getElementById("card-kicker");
+  const body = document.getElementById("card-offer-body");
+  if (memberSession?.hasCard) {
+    kicker.textContent = "Card active";
+    body.innerHTML = `
+      <div class="card-offer">
+        <div class="card-offer-top">
+          <span class="card-brand">Best Buy Card</span>
+          <span class="card-chip"></span>
+        </div>
+        <div>
+          <div class="card-offer-main">Active card on file</div>
+          <div class="card-offer-sub">${memberSession.cardType} · ${memberSession.financing}</div>
+        </div>
+      </div>
+      <ul class="card-benefit-list">
+        <li>Use financing offer if the customer wants lower monthly payments</li>
+        <li>Can pair with open box savings and membership attach</li>
+        <li>Verify ID and payment preference at checkout</li>
+      </ul>
+      <button class="card-cta" type="button" id="card-demo-btn">Add financing note</button>
+    `;
+  } else {
+    kicker.textContent = memberSession ? "Offer available" : "Check account";
+    body.innerHTML = `
+      <div class="card-offer">
+        <div class="card-offer-top">
+          <span class="card-brand">Best Buy Card</span>
+          <span class="card-chip"></span>
+        </div>
+        <div>
+          <div class="card-offer-main">${memberSession ? "Customer does not have a card" : "Lookup customer to check card status"}</div>
+          <div class="card-offer-sub">Show card offer when no active Best Buy Card is found.</div>
+        </div>
+      </div>
+      <ul class="card-benefit-list">
+        <li>Flexible financing options on qualifying purchases</li>
+        <li>Rewards value can help close larger baskets</li>
+        <li>Useful when open box savings frees up budget for attach</li>
+      </ul>
+      <button class="card-cta" type="button" id="card-demo-btn">${memberSession ? "Present card offer" : "Lookup first"}</button>
+    `;
+  }
+  document.getElementById("card-demo-btn").addEventListener("click", () => {
+    showToast(memberSession?.hasCard ? "Financing note added to quote" : "Card offer ready for customer");
+  });
+}
+
 function renderSalesTools() {
   document.querySelectorAll(".attach-card").forEach(btn => btn.classList.toggle("on", btn.dataset.plan === memberPlan));
   document.getElementById("attach-kicker").textContent = memberPlan === "total" ? "Total selected" : "Plus selected";
@@ -1373,7 +1442,7 @@ function renderSalesTools() {
       </div>
       <div class="member-detail">
         <div class="member-detail-label">Best Buy Card</div>
-        <div class="member-detail-value good">Active · ${memberSession.cardType}</div>
+        <div class="member-detail-value${memberSession.hasCard ? " good" : ""}">${memberSession.hasCard ? `Active · ${memberSession.cardType}` : "No card on file"}</div>
       </div>
       <div class="member-detail">
         <div class="member-detail-label">Rewards</div>
@@ -1401,6 +1470,7 @@ function renderSalesTools() {
       </div>
     `;
   }
+  renderCardOffer();
 
   const compareItems = compareIds.map(findItem).filter(Boolean);
   const compareSlots = document.getElementById("compare-slots");
