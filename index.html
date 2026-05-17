@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Open Box — Best Buy Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --blue: #0045BE;
+  --blue-dim: #003DA8;
+  --yellow: #FFF100;
+  --yellow-dim: #E6D900;
+  --ink: #0F1923;
+  --ink-2: #2C3A47;
+  --ink-3: #536070;
+  --line: #E2E8ED;
+  --line-2: #F0F4F7;
+  --surface: #F7F9FB;
+  --white: #FFFFFF;
+  --green: #007A45;
+  --green-bg: #E8F5EE;
+  --amber: #B85C00;
+  --amber-bg: #FFF3E5;
+  --red: #B91C1C;
+  --red-bg: #FEF2F2;
+  --r4: 4px; --r8: 8px; --r12: 12px; --r16: 16px; --r24: 24px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+
+/* ── SETUP ── */
+.gate { position: fixed; inset: 0; z-index: 600; background: var(--blue); display: flex; align-items: center; justify-content: center; padding: 24px; }
+.gate-card { background: var(--white); border-radius: var(--r24); padding: 36px 32px; max-width: 420px; width: 100%; }
+.gate-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.gate-pill { background: var(--yellow); color: var(--blue); font-weight: 700; font-size: 12px; padding: 5px 10px; border-radius: var(--r4); letter-spacing: .06em; text-transform: uppercase; }
+.gate-wordmark { font-weight: 700; font-size: 17px; color: var(--ink); }
+.gate-h { font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.gate-sub { font-size: 13px; color: var(--ink-3); line-height: 1.6; margin-bottom: 24px; }
+.gate-label { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.gate-input { width: 100%; height: 48px; border: 1.5px solid var(--line); border-radius: var(--r12); padding: 0 16px; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink); outline: none; transition: border-color .15s; margin-bottom: 14px; }
+.gate-input:focus { border-color: var(--blue); }
+.gate-input::placeholder { font-family: 'DM Sans', sans-serif; color: var(--ink-3); font-size: 13px; }
+.gate-cta { width: 100%; height: 50px; background: var(--yellow); color: var(--blue); border: none; border-radius: var(--r12); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .12s, transform .1s; margin-bottom: 10px; }
+.gate-cta:active { transform: scale(.98); }
+.gate-cta:disabled { background: var(--line); color: var(--ink-3); cursor: not-allowed; }
+.gate-secondary { width: 100%; height: 44px; background: none; border: 1.5px solid var(--line); border-radius: var(--r12); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--ink-3); cursor: pointer; transition: all .12s; margin-bottom: 20px; }
+.gate-secondary:hover { border-color: var(--blue); color: var(--blue); }
+.gate-err { background: var(--red-bg); color: var(--red); font-size: 12px; font-weight: 500; padding: 10px 12px; border-radius: var(--r8); margin-bottom: 12px; display: none; }
+.gate-more { border: 1px solid var(--line); border-radius: var(--r12); margin: 4px 0 18px; overflow: hidden; background: var(--surface); }
+.gate-more-toggle { width: 100%; min-height: 44px; border: none; background: var(--white); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink); cursor: pointer; text-align: left; }
+.gate-more-toggle span { display: flex; align-items: center; gap: 8px; }
+.gate-more-toggle svg { width: 16px; height: 16px; color: var(--blue); flex: 0 0 auto; }
+.gate-caret { color: var(--ink-3); transition: transform .16s; }
+.gate-more.open .gate-caret { transform: rotate(180deg); }
+.gate-more-body { display: none; padding: 14px; border-top: 1px solid var(--line); }
+.gate-more.open .gate-more-body { display: block; }
+.sso-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--r8); padding: 14px; }
+.sso-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.sso-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.sso-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; background: #EEF3FF; color: var(--blue); border-radius: var(--r4); padding: 4px 8px; white-space: nowrap; }
+.sso-copy { font-size: 12px; color: var(--ink-3); line-height: 1.55; margin-bottom: 12px; }
+.sso-flow { display: grid; gap: 7px; margin-bottom: 12px; }
+.sso-step { display: flex; align-items: center; gap: 8px; min-height: 30px; background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r8); padding: 7px 9px; font-size: 12px; color: var(--ink-2); }
+.sso-num { width: 19px; height: 19px; border-radius: 50%; background: var(--blue); color: var(--white); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex: 0 0 auto; }
+.sso-actions { display: grid; gap: 8px; }
+.sso-ms-btn { height: 42px; border: 1.5px solid #2F2F2F; border-radius: var(--r8); background: var(--white); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 9px; }
+.ms-mark { width: 16px; height: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.ms-mark i:nth-child(1) { background: #F25022; }
+.ms-mark i:nth-child(2) { background: #7FBA00; }
+.ms-mark i:nth-child(3) { background: #00A4EF; }
+.ms-mark i:nth-child(4) { background: #FFB900; }
+.sso-note { background: var(--amber-bg); color: var(--amber); border-radius: var(--r8); padding: 9px 10px; font-size: 11px; line-height: 1.5; }
+.sso-status { display: none; margin-top: 10px; background: var(--green-bg); color: var(--green); border-radius: var(--r8); padding: 10px; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.sso-status.show { display: block; }
+.gate-credit { text-align: center; font-size: 12px; color: var(--ink-3); padding-top: 16px; border-top: 1px solid var(--line); }
+.gate-credit a { color: var(--blue); font-weight: 600; text-decoration: none; }
+
+/* ── LOADING ── */
+.loading { position: fixed; inset: 0; z-index: 500; background: var(--surface); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+.loading-ring { width: 44px; height: 44px; border: 3px solid var(--line); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-label { font-size: 14px; font-weight: 500; color: var(--ink-3); }
+.loading-cat { font-size: 12px; color: var(--ink-3); opacity: .6; margin-top: -12px; }
+
+/* ── APP SHELL ── */
+.app { display: none; }
+.app.on { display: block; }
+
+/* ── TOP BAR ── */
+.topbar { background: var(--blue); height: 54px; position: sticky; top: 0; z-index: 200; }
+.topbar-in { max-width: 1080px; margin: 0 auto; height: 100%; display: flex; align-items: center; gap: 12px; padding: 0 20px; }
+.tb-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.tb-pill { background: var(--yellow); color: var(--blue); font-weight: 700; font-size: 11px; padding: 3px 7px; border-radius: 3px; letter-spacing: .05em; text-transform: uppercase; }
+.tb-sep { width: 1px; height: 18px; background: rgba(255,255,255,.2); }
+.tb-name { color: white; font-size: 14px; font-weight: 600; }
+.tb-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.tb-store { background: rgba(255,255,255,.12); color: rgba(255,255,255,.85); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; letter-spacing: .03em; }
+.tb-btn { background: rgba(255,255,255,.12); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: background .12s; }
+.tb-btn:hover { background: rgba(255,255,255,.22); }
+
+/* ── DEPT SELECTOR ── */
+.dept-bar { background: var(--white); border-bottom: 1px solid var(--line); }
+.dept-bar-in { max-width: 1080px; margin: 0 auto; padding: 0 20px; display: flex; gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.dept-bar-in::-webkit-scrollbar { display: none; }
+.dept-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 18px 10px; border: none; background: none; cursor: pointer; font-family: inherit; border-bottom: 3px solid transparent; white-space: nowrap; transition: all .15s; flex-shrink: 0; }
+.dept-tab .dt-icon { font-size: 20px; line-height: 1; }
+.dept-tab .dt-label { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: .02em; transition: color .15s; }
+.dept-tab:hover .dt-label { color: var(--blue); }
+.dept-tab.active { border-bottom-color: var(--blue); }
+.dept-tab.active .dt-label { color: var(--blue); }
+
+/* ── SEARCH + FILTERS ROW ── */
+.controls { background: var(--white); border-bottom: 1px solid var(--line); padding: 12px 20px; }
+.controls-in { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.search-row { display: flex; gap: 8px; }
+.search-box { flex: 1; position: relative; }
+.search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; width: 16px; height: 16px; }
+.search-inp { width: 100%; height: 40px; border: 1.5px solid var(--line); border-radius: var(--r8); padding: 0 14px 0 40px; font-family: inherit; font-size: 14px; color: var(--ink); background: var(--surface); outline: none; transition: border-color .15s; }
+.search-inp:focus { border-color: var(--blue); background: var(--white); }
+.search-inp::placeholder { color: var(--ink-3); }
+.ctrl-btn { height: 40px; padding: 0 14px; border: 1.5px solid var(--line); border-radius: var(--r8); background: var(--white); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--ink-3); cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; transition: all .12s; flex-shrink: 0; }
+.ctrl-btn:hover { border-color: var(--blue); color: var(--blue); }
+.ctrl-btn.yellow { background: var(--yellow); color: var(--blue); border-color: var(--yellow); font-weight: 600; }
+.ctrl-btn.yellow:hover { background: var(--yellow-dim); }
+.ctrl-btn.spin svg { animation: spin .7s linear infinite; }
+
+/* DEPT FILTERS */
+.dept-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.filter-group { display: flex; align-items: center; gap: 4px; }
+.filter-group-label { font-size: 11px; font-weight: 600; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-right: 2px; white-space: nowrap; }
+.pill-btn { height: 30px; padding: 0 12px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--white); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--ink-3); cursor: pointer; white-space: nowrap; transition: all .12s; }
+.pill-btn:hover { border-color: var(--blue); color: var(--blue); }
+.pill-btn.on { background: var(--blue); color: var(--white); border-color: var(--blue); font-weight: 600; }
+.filter-sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+.sort-select { height: 30px; padding: 0 10px; border: 1.5px solid var(--line); border-radius: 20px; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--ink-3); background: var(--white); cursor: pointer; outline: none; }
+.sort-select:focus { border-color: var(--blue); }
+
+/* ── RESULTS HEADER ── */
+.results-header { max-width: 1080px; margin: 0 auto; padding: 16px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
+.results-count { font-size: 13px; color: var(--ink-3); }
+.results-count strong { color: var(--ink); font-weight: 600; }
+.live-dot { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--green); }
+.live-dot::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; display: inline-block; }
+.demo-dot { color: var(--amber); }
+.demo-dot::before { background: var(--amber); }
+
+/* ── PRODUCT GRID ── */
+.grid-wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 60px; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+@media (max-width: 680px) { .product-grid { grid-template-columns: 1fr; } }
+
+/* ── PRODUCT CARD ── */
+.pcard { background: var(--white); border: 1px solid var(--line); border-radius: var(--r16); overflow: hidden; cursor: pointer; transition: box-shadow .15s, border-color .15s, transform .12s; position: relative; }
+.pcard:hover { box-shadow: 0 4px 20px rgba(15,25,35,.08); border-color: #C5D0D9; transform: translateY(-2px); }
+.pcard.expanded { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,69,190,.1); }
+
+/* card image area */
+.pc-img-wrap { height: 160px; background: var(--surface); display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; border-bottom: 1px solid var(--line-2); }
+.pc-img { max-width: 100%; max-height: 120px; object-fit: contain; }
+.pc-img-placeholder { font-size: 56px; opacity: .25; }
+.pc-cond-badge { position: absolute; top: 12px; left: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: var(--r4); letter-spacing: .05em; text-transform: uppercase; }
+.cond-exc { background: var(--green-bg); color: var(--green); }
+.cond-cert { background: #EEF2FF; color: #4F46E5; }
+.pc-hot { position: absolute; top: 12px; right: 12px; background: var(--red); color: white; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: var(--r4); letter-spacing: .05em; text-transform: uppercase; }
+
+/* card body */
+.pc-body { padding: 16px; }
+.pc-brand { font-size: 11px; font-weight: 600; color: var(--blue); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px; }
+.pc-name { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.35; margin-bottom: 8px; }
+
+/* specs chips */
+.pc-specs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+.spec-chip { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r4); padding: 3px 8px; font-size: 11px; font-weight: 500; color: var(--ink-2); font-family: 'DM Mono', monospace; white-space: nowrap; }
+
+/* pricing */
+.pc-pricing { display: flex; align-items: flex-end; justify-content: space-between; }
+.pc-price-left {}
+.pc-sale { font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -.5px; }
+.pc-was { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
+.pc-was span { text-decoration: line-through; }
+.pc-save-pill { background: var(--yellow); color: var(--ink); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: var(--r4); white-space: nowrap; }
+
+/* card footer */
+.pc-footer { display: flex; border-top: 1px solid var(--line-2); }
+.pc-act { flex: 1; height: 44px; border: none; background: none; font-family: inherit; font-size: 12px; font-weight: 600; color: var(--ink-3); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all .12s; }
+.pc-act:hover { background: var(--surface); color: var(--ink); }
+.pc-act.primary { color: var(--blue); }
+.pc-act.primary:hover { background: #EEF3FF; }
+.pc-act + .pc-act { border-left: 1px solid var(--line-2); }
+
+/* expanded detail */
+.pc-expand { display: none; border-top: 1px solid var(--line); background: var(--surface); }
+.pc-expand.open { display: block; }
+.pc-expand-in { padding: 16px; }
+.expand-section { margin-bottom: 14px; }
+.expand-section:last-child { margin-bottom: 0; }
+.expand-label { font-size: 10px; font-weight: 700; color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.price-breakdown { background: var(--white); border: 1px solid var(--line); border-radius: var(--r8); overflow: hidden; }
+.pb-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; font-size: 13px; }
+.pb-row + .pb-row { border-top: 1px solid var(--line-2); }
+.pb-label { color: var(--ink-3); font-weight: 400; }
+.pb-val { font-weight: 600; color: var(--ink); }
+.pb-val.strike { text-decoration: line-through; color: var(--ink-3); font-weight: 400; }
+.pb-val.green { color: var(--green); }
+.pb-val.blue { color: var(--blue); }
+.sell-note { background: var(--white); border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: var(--r8); padding: 12px 14px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+.sku-strip { background: var(--ink); border-radius: var(--r8); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+.sku-mono { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; color: white; letter-spacing: .06em; }
+.sku-cp { background: var(--yellow); color: var(--blue); border: none; border-radius: var(--r4); padding: 5px 12px; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer; transition: background .12s; }
+.sku-cp:hover { background: var(--yellow-dim); }
+.lpn-btn-row { display: flex; gap: 8px; }
+.lpn-coming { flex: 1; height: 38px; background: none; border: 1.5px dashed var(--line); border-radius: var(--r8); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--ink-3); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all .12s; }
+.lpn-coming:hover { border-color: #9333EA; color: #9333EA; }
+
+/* ── EMPTY STATE ── */
+.empty { text-align: center; padding: 80px 20px; color: var(--ink-3); }
+.empty-icon { font-size: 52px; margin-bottom: 14px; opacity: .4; }
+.empty-title { font-size: 16px; font-weight: 600; color: var(--ink-2); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; }
+
+/* ── AI SHEET ── */
+.ai-ov { position: fixed; inset: 0; z-index: 300; background: rgba(15,25,35,.5); display: none; align-items: flex-end; backdrop-filter: blur(4px); }
+.ai-ov.open { display: flex; }
+.ai-sheet { background: var(--white); width: 100%; max-width: 1080px; margin: 0 auto; border-radius: 20px 20px 0 0; max-height: 80vh; overflow-y: auto; box-shadow: 0 -12px 48px rgba(15,25,35,.15); }
+.ai-hdr { background: var(--blue); padding: 18px 24px; border-radius: 20px 20px 0 0; display: flex; align-items: center; justify-content: space-between; }
+.ai-hdr-l { display: flex; align-items: center; gap: 12px; }
+.ai-icon { width: 38px; height: 38px; background: var(--yellow); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.ai-title { color: white; font-weight: 700; font-size: 15px; }
+.ai-sub { color: rgba(255,255,255,.6); font-size: 11px; margin-top: 1px; }
+.ai-close { background: rgba(255,255,255,.12); border: none; width: 34px; height: 34px; border-radius: 50%; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.ai-body { padding: 22px 24px; }
+.ai-ql { font-size: 11px; font-weight: 700; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.ai-qgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.ai-qchip { border: 1.5px solid var(--line); background: var(--surface); border-radius: var(--r8); padding: 10px 12px; text-align: left; font-family: inherit; font-size: 12px; font-weight: 500; color: var(--ink-2); cursor: pointer; transition: all .12s; line-height: 1.4; }
+.ai-qchip:hover { border-color: var(--blue); color: var(--blue); background: #EEF3FF; }
+.ai-ta { width: 100%; border: 1.5px solid var(--line); border-radius: var(--r12); padding: 14px 16px; font-family: inherit; font-size: 14px; color: var(--ink); resize: none; outline: none; transition: border-color .15s; line-height: 1.5; margin-bottom: 12px; }
+.ai-ta:focus { border-color: var(--blue); }
+.ai-ta::placeholder { color: var(--ink-3); }
+.ai-go { width: 100%; height: 48px; background: var(--yellow); color: var(--blue); border: none; border-radius: var(--r12); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .12s, transform .1s; }
+.ai-go:active { transform: scale(.98); }
+.ai-go:disabled { background: var(--line); color: var(--ink-3); cursor: not-allowed; }
+.ai-result { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: var(--r12); padding: 16px; margin-top: 14px; font-size: 13px; line-height: 1.8; color: var(--ink-2); display: none; }
+.ai-result.open { display: block; }
+.ai-loading { text-align: center; padding: 24px; color: var(--ink-3); font-size: 13px; font-weight: 500; display: none; }
+.ai-loading.open { display: block; }
+.ai-dots::after { content: '...'; animation: dots 1.2s steps(4,end) infinite; }
+@keyframes dots { 0%,20%{content:''} 30%,40%{content:'.'} 50%,60%{content:'..'} 70%,100%{content:'...'} }
+
+/* ── LPN MODAL ── */
+.modal-bg { position: fixed; inset: 0; z-index: 400; background: rgba(15,25,35,.5); display: none; align-items: center; justify-content: center; padding: 24px; backdrop-filter: blur(4px); }
+.modal-bg.open { display: flex; }
+.modal-box { background: var(--white); border-radius: var(--r24); padding: 32px 28px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 24px 64px rgba(15,25,35,.15); }
+.modal-emoji { font-size: 52px; margin-bottom: 16px; }
+.modal-tag { display: inline-block; background: #F3EEFF; color: #9333EA; font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 14px; }
+.modal-h { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.modal-p { font-size: 13px; color: var(--ink-3); line-height: 1.7; margin-bottom: 22px; }
+.modal-close { width: 100%; height: 46px; background: var(--blue); color: white; border: none; border-radius: var(--r12); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: white; padding: 11px 22px; border-radius: 24px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(15,25,35,.2); z-index: 999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ── FOOTER ── */
+.app-footer { text-align: center; padding: 20px; font-size: 12px; color: var(--ink-3); }
+.app-footer a { color: var(--blue); font-weight: 600; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="gate-logo">
+      <div class="gate-pill">Best Buy</div>
+      <span class="gate-wordmark">Open Box Finder</span>
+    </div>
+    <div class="gate-h">Connect to Live Inventory</div>
+    <div class="gate-sub">Get your free API key at <strong>developer.bestbuy.com</strong> → Dashboard → My API Keys. Use your work email.</div>
+    <div class="gate-label">API Key</div>
+    <div class="gate-err" id="gate-err"></div>
+    <input class="gate-input" id="api-key" type="text" placeholder="Paste key here…" autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <button class="gate-cta" id="gate-btn">Connect →</button>
+    <button class="gate-secondary" id="demo-btn">Continue with sample data</button>
+    <div class="gate-more" id="gate-more">
+      <button class="gate-more-toggle" id="gate-more-toggle" type="button" aria-expanded="false">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Additional features
+        </span>
+        <span class="gate-caret">⌄</span>
+      </button>
+      <div class="gate-more-body">
+        <div class="sso-card">
+          <div class="sso-head">
+            <div class="sso-title">Employee SSO trial</div>
+            <div class="sso-badge">Demo-ready</div>
+          </div>
+          <div class="sso-copy">Prototype the future login path with Microsoft Entra ID, @bestbuy.com domain checks, role routing, and a PingID MFA handoff.</div>
+          <div class="sso-flow" aria-label="SSO trial flow">
+            <div class="sso-step"><span class="sso-num">1</span> Microsoft verifies Outlook work email</div>
+            <div class="sso-step"><span class="sso-num">2</span> PingID challenge confirms employee MFA</div>
+            <div class="sso-step"><span class="sso-num">3</span> App assigns Sales or Admin access</div>
+          </div>
+          <div class="sso-actions">
+            <button class="sso-ms-btn" id="sso-demo-btn" type="button">
+              <span class="ms-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+              Try Microsoft + PingID demo
+            </button>
+            <div class="sso-note">This does not collect passwords. Real SSO will need a Best Buy-approved Microsoft app registration and PingID/OIDC or SAML configuration.</div>
+          </div>
+          <div class="sso-status" id="sso-status">Verified demo session: ashish.subedi@bestbuy.com · Salesperson access · PingID MFA passed</div>
+        </div>
+      </div>
+    </div>
+    <div class="gate-credit">Built by <a href="https://ashish-portfolio-rust.vercel.app" target="_blank">Ashish Subedi</a> · Store 360, Williston VT</div>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div style="background:var(--yellow);padding:6px 12px;border-radius:4px;font-weight:700;font-size:13px;color:var(--blue);letter-spacing:.04em">BEST BUY</div>
+  <div class="loading-ring"></div>
+  <div class="loading-label" id="load-label">Loading inventory…</div>
+  <div class="loading-cat" id="load-cat">Fetching open box data</div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-in">
+      <div class="tb-logo">
+        <div class="tb-pill">BB</div>
+        <div class="tb-sep"></div>
+        <span class="tb-name">Open Box Finder</span>
+      </div>
+      <div class="tb-right">
+        <span class="tb-store" id="tb-store">Store 360</span>
+        <button class="tb-btn" id="ai-open-btn" title="AI Advisor">🤖</button>
+        <button class="tb-btn" id="settings-btn" title="Settings">⚙️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEPT BAR -->
+  <div class="dept-bar">
+    <div class="dept-bar-in" id="dept-tabs"></div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="controls-in">
+      <div class="search-row">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input class="search-inp" id="search-inp" type="search" placeholder="Search by name, brand, model, or SKU…" autocomplete="off"/>
+        </div>
+        <button class="ctrl-btn" id="refresh-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+          Refresh
+        </button>
+        <button class="ctrl-btn yellow" id="ai-btn-ctrl">🤖 AI Advisor</button>
+      </div>
+      <div class="dept-filters" id="dept-filters"></div>
+    </div>
+  </div>
+
+  <!-- RESULTS HEADER -->
+  <div class="results-header">
+    <div class="results-count" id="results-count"><strong>—</strong> deals</div>
+    <div id="live-indicator"></div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid-wrap">
+    <div class="product-grid" id="product-grid"></div>
+    <div class="empty" id="empty-state" style="display:none">
+      <div class="empty-icon">📦</div>
+      <div class="empty-title">No open box deals found</div>
+      <div class="empty-sub">Try switching departments or adjusting filters</div>
+    </div>
+  </div>
+
+  <div class="app-footer">Built by <a href="https://ashish-portfolio-rust.vercel.app" target="_blank">Ashish Subedi</a> · Best Buy Store 360, Williston VT</div>
+</div>
+
+<!-- AI SHEET -->
+<div class="ai-ov" id="ai-ov">
+  <div class="ai-sheet">
+    <div class="ai-hdr">
+      <div class="ai-hdr-l">
+        <div class="ai-icon">🤖</div>
+        <div><div class="ai-title">AI Deal Advisor</div><div class="ai-sub">Powered by Claude · Built by Ashish Subedi</div></div>
+      </div>
+      <button class="ai-close" id="ai-close">✕</button>
+    </div>
+    <div class="ai-body">
+      <div class="ai-ql">Quick queries</div>
+      <div class="ai-qgrid">
+        <button class="ai-qchip" data-q="What are the best open box deals to push today?">🔥 Best to push today</button>
+        <button class="ai-qchip" data-q="Customer has a $800 budget for a laptop. What do I show them?">💻 Laptop under $800</button>
+        <button class="ai-qchip" data-q="Which deals have the biggest savings I can lead with?">💰 Biggest savings</button>
+        <button class="ai-qchip" data-q="Customer wants Apple only. What open box Apple products do we have?">🍎 Apple products only</button>
+        <button class="ai-qchip" data-q="What Excellent condition open box units should I show first?">⭐ Excellent condition</button>
+        <button class="ai-qchip" data-q="Customer wants a TV under $1,000. What are the best options?">📺 TVs under $1,000</button>
+      </div>
+      <textarea class="ai-ta" id="ai-ta" rows="3" placeholder="e.g. 'Customer wants a Windows laptop for college under $700…'"></textarea>
+      <button class="ai-go" id="ai-go">⚡ Analyze Current Deals</button>
+      <div class="ai-loading" id="ai-loading"><span class="ai-dots">Analyzing inventory</span></div>
+      <div class="ai-result" id="ai-result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LPN MODAL -->
+<div class="modal-bg" id="lpn-modal">
+  <div class="modal-box">
+    <div class="modal-emoji">🏷️</div>
+    <div class="modal-tag">Coming in V2</div>
+    <div class="modal-h">LPN Integration</div>
+    <div class="modal-p">LPN (License Plate Number) data lives exclusively in Best Buy's internal IROC system and isn't accessible through the public API.<br/><br/><strong>V2 roadmap:</strong> Direct IROC integration would auto-populate every open box unit's LPN, condition notes, and damage descriptions.</div>
+    <button class="modal-close" id="lpn-close">Got it</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DEPARTMENT CONFIG
+// ─────────────────────────────────────────────
+const DEPTS = [
+  {
+    id: "laptops", label: "Laptops", icon: "💻",
+    cats: ["abcat0204000"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Apple","Dell","HP","Lenovo","Samsung","Microsoft","Asus","Acer"] },
+      { id: "ram", label: "RAM", type: "pills", opts: ["All","8GB","16GB","32GB","64GB"] },
+      { id: "storage", label: "Storage", type: "pills", opts: ["All","256GB","512GB","1TB","2TB"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      const txt = (name + " " + desc).toLowerCase();
+      // RAM
+      const ram = txt.match(/(\d+)\s*gb\s*(ram|memory|unified)/);
+      if (ram) specs.push(ram[1] + "GB RAM");
+      // Storage
+      const ssd = txt.match(/(\d+)\s*(gb|tb)\s*(ssd|storage|flash|emmc|nvme)/);
+      if (ssd) specs.push(ssd[1] + ssd[2].toUpperCase() + " SSD");
+      // Processor
+      const m = txt.match(/m[1-4]\s*(pro|max|ultra)?/);
+      const i = txt.match(/core\s*i[3579][-\s]?[\w]*/);
+      const r = txt.match(/ryzen\s*[379]\s*[\d]*/i);
+      if (m) specs.push(m[0].toUpperCase().trim());
+      else if (i) specs.push(i[0].replace(/core /i,"").trim().toUpperCase());
+      else if (r) specs.push(r[0].trim());
+      // Display
+      const disp = name.match(/(\d+\.?\d*)["\s]*(?:inch|")/i);
+      if (disp) specs.push(disp[1] + '"');
+      return specs.slice(0, 4);
+    },
+    brandFromName: (name) => {
+      const b = ["Apple","Dell","HP","Lenovo","Samsung","Microsoft","Asus","Acer","LG","Razer"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+  {
+    id: "tvs", label: "TVs", icon: "📺",
+    cats: ["abcat0101001"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Samsung","LG","Sony","TCL","Hisense","Vizio","Insignia"] },
+      { id: "size", label: "Size", type: "pills", opts: ["All","Under 50\"","50–65\"","65–75\"","75\"+"] },
+      { id: "type", label: "Type", type: "pills", opts: ["All","OLED","QLED","LED","Mini LED"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      const sizeMatch = name.match(/(\d{2,3})[\s"']*(?:class|inch|")/i) || name.match(/(\d{2,3})"/i);
+      if (sizeMatch) specs.push(sizeMatch[1] + '"');
+      if (/oled/i.test(name+desc)) specs.push("OLED");
+      else if (/qled|neo qled/i.test(name+desc)) specs.push("QLED");
+      else if (/mini.?led/i.test(name+desc)) specs.push("Mini LED");
+      if (/4k|uhd/i.test(name+desc)) specs.push("4K");
+      if (/8k/i.test(name+desc)) specs.push("8K");
+      if (/120hz|144hz|240hz/i.test(name+desc)) { const hz = (name+desc).match(/(\d{3})hz/i); if(hz) specs.push(hz[1]+"Hz"); }
+      return specs.slice(0,4);
+    },
+    brandFromName: (name) => {
+      const b = ["Samsung","LG","Sony","TCL","Hisense","Vizio","Insignia","Philips"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+  {
+    id: "phones", label: "Phones", icon: "📱",
+    cats: ["abcat0208012"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Apple","Samsung","Google","Motorola","OnePlus"] },
+      { id: "storage", label: "Storage", type: "pills", opts: ["All","128GB","256GB","512GB","1TB"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      const stor = name.match(/(\d+)\s*GB/i);
+      if (stor) specs.push(stor[1] + "GB");
+      if (/pro max/i.test(name)) specs.push("Pro Max");
+      else if (/pro/i.test(name)) specs.push("Pro");
+      else if (/ultra/i.test(name)) specs.push("Ultra");
+      else if (/plus/i.test(name)) specs.push("Plus");
+      const ver = name.match(/(?:iphone|galaxy s|pixel)\s*([\d]+)/i);
+      if (ver) specs.push(ver[0].trim());
+      return specs.slice(0,4);
+    },
+    brandFromName: (name) => {
+      const b = ["Apple","Samsung","Google","Motorola","OnePlus","Nothing"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+  {
+    id: "tablets", label: "Tablets", icon: "🖥️",
+    cats: ["abcat0208000"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Apple","Samsung","Microsoft","Lenovo","Amazon"] },
+      { id: "storage", label: "Storage", type: "pills", opts: ["All","64GB","128GB","256GB","512GB"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      const stor = name.match(/(\d+)\s*GB/i);
+      if (stor) specs.push(stor[1] + "GB");
+      if (/m[1-4]/i.test(name)) { const m = name.match(/m[1-4]\s*(pro|max)?/i); if(m) specs.push(m[0].toUpperCase()); }
+      const disp = name.match(/(\d+\.?\d*)["\s]*(?:inch|")/i);
+      if (disp) specs.push(disp[1] + '"');
+      if (/wi-?fi/i.test(name)) specs.push("Wi-Fi");
+      if (/cellular|5g|lte/i.test(name)) specs.push("5G");
+      return specs.slice(0,4);
+    },
+    brandFromName: (name) => {
+      const b = ["Apple","Samsung","Microsoft","Lenovo","Amazon"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+  {
+    id: "appliances", label: "Appliances", icon: "🏠",
+    cats: ["abcat0401000","abcat0902000","abcat0401800"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Samsung","LG","Whirlpool","GE","Bosch","Maytag","KitchenAid"] },
+      { id: "type", label: "Type", type: "pills", opts: ["All","Refrigerators","Washers","Dryers","Dishwashers","Ranges"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      const cu = name.match(/(\d+\.?\d*)\s*cu\.?\s*ft/i);
+      if (cu) specs.push(cu[1] + " cu.ft");
+      if (/french door/i.test(name)) specs.push("French Door");
+      else if (/side.by.side/i.test(name)) specs.push("Side-by-Side");
+      else if (/bottom freezer/i.test(name)) specs.push("Bottom Freezer");
+      if (/stainless/i.test(name+desc)) specs.push("Stainless");
+      if (/smart|wifi/i.test(name+desc)) specs.push("Smart");
+      return specs.slice(0,4);
+    },
+    brandFromName: (name) => {
+      const b = ["Samsung","LG","Whirlpool","GE","Bosch","Maytag","KitchenAid","Frigidaire","Electrolux"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+  {
+    id: "audio", label: "Audio", icon: "🎧",
+    cats: ["abcat0507002","abcat0500000"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Sony","Bose","Apple","Samsung","JBL","Sennheiser","Jabra"] },
+      { id: "type", label: "Type", type: "pills", opts: ["All","Over-Ear","In-Ear","Earbuds","Soundbar","Speaker"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      if (/noise.canceling|anc/i.test(name+desc)) specs.push("ANC");
+      if (/wireless|bluetooth/i.test(name+desc)) specs.push("Wireless");
+      const hrs = (name+desc).match(/(\d+).?hr|(\d+).?hour/i);
+      if (hrs) specs.push((hrs[1]||hrs[2]) + "hr battery");
+      if (/true wireless|tws/i.test(name+desc)) specs.push("True Wireless");
+      return specs.slice(0,4);
+    },
+    brandFromName: (name) => {
+      const b = ["Sony","Bose","Apple","Samsung","JBL","Sennheiser","Jabra","Beats","Skullcandy"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+  {
+    id: "computers", label: "Computers", icon: "🖱️",
+    cats: ["abcat0200000"],
+    filters: [
+      { id: "brand", label: "Brand", type: "pills", opts: ["All","Apple","Dell","HP","Lenovo","Asus","Acer"] },
+      { id: "type", label: "Type", type: "pills", opts: ["All","Desktop","Monitor","All-in-One"] },
+    ],
+    parseSpec: (name, desc) => {
+      const specs = [];
+      const txt = (name+desc).toLowerCase();
+      const ram = txt.match(/(\d+)\s*gb\s*(ram|memory)/);
+      if (ram) specs.push(ram[1]+"GB RAM");
+      const stor = txt.match(/(\d+)\s*(gb|tb)\s*(ssd|hdd|storage)/);
+      if (stor) specs.push(stor[1]+stor[2].toUpperCase());
+      const cpu = txt.match(/i[3579][-\s]?\d{4,5}/);
+      if (cpu) specs.push(cpu[0].toUpperCase());
+      const disp = name.match(/(\d+\.?\d*)["\s]*(?:inch|")/i);
+      if (disp) specs.push(disp[1]+'"');
+      return specs.slice(0,4);
+    },
+    brandFromName: (name) => {
+      const b = ["Apple","Dell","HP","Lenovo","Asus","Acer","Microsoft"];
+      return b.find(x => name.toLowerCase().includes(x.toLowerCase())) || "";
+    }
+  },
+];
+
+const DEMO_ITEMS = [
+  {sku:"6534632",name:"Apple MacBook Pro 14\" M3 Pro 18GB/512GB",desc:"M3 Pro chip, 18GB unified memory, Liquid Retina XDR, ProRes",category:"laptops",reg:1999.99,sale:1399.99,cond:"excellent",rating:4.9,reviews:447,img:""},
+  {sku:"6499198",name:"Dell XPS 15\" OLED Touch i7-13700H 16GB/512GB",desc:"Intel Core i7 13th Gen, NVIDIA RTX 4060, OLED touch 3.5K",category:"laptops",reg:1899.99,sale:1099.99,cond:"excellent",rating:4.6,reviews:312,img:""},
+  {sku:"6534001",name:"Samsung Galaxy Book3 Pro 360 16\" i7 16GB/512GB",desc:"Intel Evo i7, 16GB RAM, 512GB SSD, AMOLED touch, S Pen",category:"laptops",reg:1399.99,sale:799.99,cond:"certified",rating:4.4,reviews:198,img:""},
+  {sku:"6502438",name:"LG 65\" C3 OLED evo 4K Smart TV",desc:"OLED evo panel, α9 Gen6 AI, 120Hz, Dolby Vision IQ",category:"tvs",reg:1799.99,sale:1069.99,cond:"excellent",rating:4.7,reviews:892,img:""},
+  {sku:"6412149",name:"Samsung 75\" QN90B Neo QLED 4K",desc:"Mini LED, Neo Quantum 4K, Dolby Atmos, 120Hz, Quantum HDR",category:"tvs",reg:2199.99,sale:1249.99,cond:"certified",rating:4.5,reviews:1203,img:""},
+  {sku:"6523401",name:"Samsung Galaxy S24 Ultra 256GB Titanium Gray",desc:"Snapdragon 8 Gen 3, 200MP, built-in S Pen, titanium frame",category:"phones",reg:1299.99,sale:849.99,cond:"excellent",rating:4.7,reviews:1876,img:""},
+  {sku:"6508812",name:"Apple iPhone 15 Pro 256GB Natural Titanium",desc:"A17 Pro, 48MP triple camera, USB-C, Action button",category:"phones",reg:1099.99,sale:749.99,cond:"excellent",rating:4.8,reviews:3201,img:""},
+  {sku:"6487263",name:"Apple iPad Pro 12.9\" M2 256GB Wi-Fi",desc:"Liquid Retina XDR, M2, ProMotion 120Hz, Face ID, USB-C",category:"tablets",reg:1099.99,sale:749.99,cond:"excellent",rating:4.8,reviews:2341,img:""},
+  {sku:"6412002",name:"Samsung 29 cu.ft. 4-Door French Door Refrigerator",desc:"Family Hub, AutoFill Water Pitcher, Dual Ice Maker, Steel",category:"appliances",reg:3299.99,sale:1899.99,cond:"certified",rating:4.3,reviews:567,img:""},
+  {sku:"6536211",name:"LG 5.0 cu.ft. Smart Front Load Washer",desc:"TurboWash 360, AI Direct Drive, Built-in Intelligence",category:"appliances",reg:1199.99,sale:699.99,cond:"excellent",rating:4.4,reviews:789,img:""},
+  {sku:"6412877",name:"Sony WH-1000XM5 Wireless Noise Canceling Headphones",desc:"Industry-leading ANC, 30hr battery, Multipoint Bluetooth",category:"audio",reg:399.99,sale:219.99,cond:"excellent",rating:4.8,reviews:5621,img:""},
+  {sku:"6534892",name:"LG 27\" UltraGear OLED 240Hz Gaming Monitor",desc:"0.03ms response, G-Sync compatible, WQHD, Display HDR 400",category:"computers",reg:999.99,sale:599.99,cond:"excellent",rating:4.7,reviews:743,img:""},
+];
+DEMO_ITEMS.forEach(d => {
+  d.savings = +(d.reg - d.sale).toFixed(2);
+  d.pct = Math.round(d.savings / d.reg * 100);
+  const dept = DEPTS.find(x => x.id === d.category);
+  d.specs = dept ? dept.parseSpec(d.name, d.desc) : [];
+  d.brand = dept ? dept.brandFromName(d.name) : "";
+});
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let API_KEY = localStorage.getItem("bb_key") || "";
+let IS_DEMO = false;
+let ALL_ITEMS = [];
+let activeDept = DEPTS[0].id;
+let activeFilters = {};
+let searchVal = "";
+let sortVal = "savings";
+let expandedId = null;
+let lastFetch = null;
+let authBadge = "Store 360";
+
+// ─────────────────────────────────────────────
+//  BOOT
+// ─────────────────────────────────────────────
+if (API_KEY) {
+  document.getElementById("gate").style.display = "none";
+  startApp(false);
+} else {
+  document.getElementById("gate").style.display = "flex";
+}
+
+document.getElementById("gate-btn").addEventListener("click", async () => {
+  const key = document.getElementById("api-key").value.trim();
+  if (!key) return showGateErr("Please paste your API key.");
+  const btn = document.getElementById("gate-btn");
+  btn.disabled = true; btn.textContent = "Verifying…";
+  if (await verifyKey(key)) {
+    API_KEY = key;
+    localStorage.setItem("bb_key", key);
+    document.getElementById("gate").style.display = "none";
+    startApp(false);
+  } else {
+    btn.disabled = false; btn.textContent = "Connect →";
+    showGateErr("Invalid key or network error. Try again.");
+  }
+});
+
+document.getElementById("demo-btn").addEventListener("click", () => {
+  document.getElementById("gate").style.display = "none";
+  startApp(true);
+});
+
+document.getElementById("gate-more-toggle").addEventListener("click", () => {
+  const panel = document.getElementById("gate-more");
+  const isOpen = panel.classList.toggle("open");
+  document.getElementById("gate-more-toggle").setAttribute("aria-expanded", String(isOpen));
+});
+
+document.getElementById("sso-demo-btn").addEventListener("click", async () => {
+  const btn = document.getElementById("sso-demo-btn");
+  const status = document.getElementById("sso-status");
+  btn.disabled = true;
+  btn.textContent = "Redirecting to Microsoft…";
+  await new Promise(r => setTimeout(r, 550));
+  btn.textContent = "Waiting for PingID approval…";
+  await new Promise(r => setTimeout(r, 700));
+  status.classList.add("show");
+  btn.textContent = "SSO demo verified";
+  setTimeout(() => {
+    authBadge = "Store 360 · Sales";
+    document.getElementById("gate").style.display = "none";
+    startApp(true);
+    showToast("Demo SSO session started");
+  }, 650);
+});
+
+document.getElementById("settings-btn").addEventListener("click", () => {
+  localStorage.removeItem("bb_key");
+  location.reload();
+});
+
+async function verifyKey(k) {
+  try {
+    const r = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=abcat0507002)?apiKey=${k}&pageSize=1`);
+    return r.ok;
+  } catch { return false; }
+}
+
+async function startApp(demo) {
+  IS_DEMO = demo;
+  const loading = document.getElementById("loading");
+  loading.style.display = "flex";
+
+  if (!demo) {
+    document.getElementById("load-label").textContent = "Fetching live open box inventory…";
+    document.getElementById("load-cat").textContent = "Connecting to Best Buy API";
+    ALL_ITEMS = await fetchAll();
+  } else {
+    ALL_ITEMS = DEMO_ITEMS;
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  loading.style.display = "none";
+  document.getElementById("app").classList.add("on");
+  document.getElementById("tb-store").textContent = authBadge;
+  lastFetch = new Date();
+
+  buildDeptTabs();
+  resetFilters();
+  buildDeptFilters();
+  render();
+  updateLiveIndicator();
+}
+
+// ─────────────────────────────────────────────
+//  FETCH
+// ─────────────────────────────────────────────
+async function fetchAll() {
+  const results = [];
+  const seen = new Set();
+
+  const allCatIds = [...new Set(DEPTS.flatMap(d => d.cats))];
+
+  document.getElementById("load-cat").textContent = "Fetching all departments…";
+
+  await Promise.all(allCatIds.map(async catId => {
+    try {
+      const r = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=${catId})?apiKey=${API_KEY}&pageSize=100`);
+      if (!r.ok) return;
+      const data = await r.json();
+
+      // Find which dept this category belongs to
+      const dept = DEPTS.find(d => d.cats.includes(catId));
+      if (!dept) return;
+
+      for (const item of (data.results || [])) {
+        for (const offer of (item.offers || [])) {
+          const key = `${item.sku}-${offer.condition}`;
+          const reg = offer.prices?.regular || item.prices?.regular || 0;
+          const sale = offer.prices?.current || item.prices?.current || 0;
+          const savings = +(reg - sale).toFixed(2);
+          if (!seen.has(key) && savings > 0) {
+            seen.add(key);
+
+            // Try to get specs from Products API
+            let fullDesc = item.descriptions?.short || "";
+            try {
+              const pr = await fetch(`https://api.bestbuy.com/v1/products/${item.sku}.json?show=shortDescription,manufacturer,modelNumber&apiKey=${API_KEY}`);
+              if (pr.ok) {
+                const pd = await pr.json();
+                fullDesc = pd.shortDescription || fullDesc;
+              }
+            } catch {}
+
+            const name = item.names?.title || "Unknown";
+            const specs = dept.parseSpec(name, fullDesc);
+            const brand = dept.brandFromName(name);
+
+            results.push({
+              sku: item.sku,
+              name,
+              desc: fullDesc,
+              category: dept.id,
+              reg, sale, savings,
+              pct: Math.round(savings / Math.max(reg, 1) * 100),
+              cond: offer.condition || "unknown",
+              rating: parseFloat(item.customerReviews?.averageScore) || 0,
+              reviews: item.customerReviews?.count || 0,
+              img: item.images?.standard || "",
+              url: item.links?.web || `https://www.bestbuy.com/site/${item.sku}.p?skuId=${item.sku}`,
+              specs,
+              brand,
+            });
+          }
+        }
+      }
+    } catch {}
+  }));
+
+  return results;
+}
+
+document.getElementById("refresh-btn").addEventListener("click", async () => {
+  if (IS_DEMO) { showToast("Sample data — add API key to refresh live"); return; }
+  const btn = document.getElementById("refresh-btn");
+  btn.classList.add("spin");
+  ALL_ITEMS = await fetchAll();
+  lastFetch = new Date();
+  btn.classList.remove("spin");
+  updateLiveIndicator();
+  render();
+  showToast("Inventory refreshed!");
+});
+
+// ─────────────────────────────────────────────
+//  DEPT TABS
+// ─────────────────────────────────────────────
+function buildDeptTabs() {
+  const el = document.getElementById("dept-tabs");
+  el.innerHTML = DEPTS.map(d => `
+    <button class="dept-tab${d.id === activeDept ? " active" : ""}" data-dept="${d.id}">
+      <span class="dt-icon">${d.icon}</span>
+      <span class="dt-label">${d.label}</span>
+    </button>
+  `).join("");
+  el.querySelectorAll(".dept-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeDept = btn.dataset.dept;
+      expandedId = null;
+      el.querySelectorAll(".dept-tab").forEach(b => b.classList.toggle("active", b.dataset.dept === activeDept));
+      resetFilters();
+      buildDeptFilters();
+      render();
+    });
+  });
+}
+
+function resetFilters() {
+  activeFilters = {};
+  const dept = DEPTS.find(d => d.id === activeDept);
+  if (dept) dept.filters.forEach(f => { activeFilters[f.id] = "All"; });
+  sortVal = "savings";
+}
+
+// ─────────────────────────────────────────────
+//  DEPT FILTERS
+// ─────────────────────────────────────────────
+function buildDeptFilters() {
+  const dept = DEPTS.find(d => d.id === activeDept);
+  const el = document.getElementById("dept-filters");
+  if (!dept) { el.innerHTML = ""; return; }
+
+  let html = "";
+  dept.filters.forEach((f, i) => {
+    if (i > 0) html += `<div class="filter-sep"></div>`;
+    html += `<div class="filter-group">`;
+    html += `<span class="filter-group-label">${f.label}</span>`;
+    f.opts.forEach(opt => {
+      const isOn = activeFilters[f.id] === opt;
+      html += `<button class="pill-btn${isOn ? " on" : ""}" data-filter="${f.id}" data-val="${opt}">${opt}</button>`;
+    });
+    html += `</div>`;
+  });
+
+  // Sort always
+  html += `<div class="filter-sep"></div>`;
+  html += `<select class="sort-select" id="sort-select">
+    <option value="savings"${sortVal==="savings"?" selected":""}>$ Saved</option>
+    <option value="pct"${sortVal==="pct"?" selected":""}>% Off</option>
+    <option value="price_asc"${sortVal==="price_asc"?" selected":""}>Price ↑</option>
+    <option value="price_desc"${sortVal==="price_desc"?" selected":""}>Price ↓</option>
+    <option value="rating"${sortVal==="rating"?" selected":""}>Rating</option>
+  </select>`;
+
+  el.innerHTML = html;
+
+  el.querySelectorAll(".pill-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const f = btn.dataset.filter;
+      const v = btn.dataset.val;
+      activeFilters[f] = v;
+      el.querySelectorAll(`.pill-btn[data-filter="${f}"]`).forEach(b => b.classList.toggle("on", b.dataset.val === v));
+      render();
+    });
+  });
+
+  const ss = el.querySelector("#sort-select");
+  if (ss) ss.addEventListener("change", e => { sortVal = e.target.value; render(); });
+}
+
+// ─────────────────────────────────────────────
+//  FILTER + SORT
+// ─────────────────────────────────────────────
+function getFiltered() {
+  const dept = DEPTS.find(d => d.id === activeDept);
+  let items = ALL_ITEMS.filter(i => i.category === activeDept);
+
+  // Apply dept filters
+  if (dept) {
+    dept.filters.forEach(f => {
+      const val = activeFilters[f.id];
+      if (!val || val === "All") return;
+      if (f.id === "brand") {
+        items = items.filter(i => i.brand === val);
+      } else if (f.id === "ram") {
+        items = items.filter(i => i.specs.some(s => s.toLowerCase().includes(val.toLowerCase())));
+      } else if (f.id === "storage") {
+        items = items.filter(i => i.specs.some(s => s.toLowerCase().includes(val.toLowerCase())));
+      } else if (f.id === "size") {
+        items = items.filter(i => {
+          const sizeSpec = i.specs.find(s => s.includes('"'));
+          if (!sizeSpec) return false;
+          const sz = parseFloat(sizeSpec);
+          if (val === 'Under 50"') return sz < 50;
+          if (val === '50–65"') return sz >= 50 && sz < 65;
+          if (val === '65–75"') return sz >= 65 && sz < 75;
+          if (val === '75"+') return sz >= 75;
+          return true;
+        });
+      } else if (f.id === "type") {
+        items = items.filter(i => i.specs.some(s => s.toLowerCase().includes(val.toLowerCase())) || i.name.toLowerCase().includes(val.toLowerCase()));
+      }
+    });
+  }
+
+  // Search
+  if (searchVal) {
+    const s = searchVal.toLowerCase();
+    items = items.filter(i =>
+      i.name.toLowerCase().includes(s) ||
+      String(i.sku).includes(s) ||
+      i.brand.toLowerCase().includes(s) ||
+      i.specs.some(spec => spec.toLowerCase().includes(s))
+    );
+  }
+
+  // Sort
+  items.sort((a, b) => {
+    if (sortVal === "savings") return b.savings - a.savings;
+    if (sortVal === "pct") return b.pct - a.pct;
+    if (sortVal === "price_asc") return a.sale - b.sale;
+    if (sortVal === "price_desc") return b.sale - a.sale;
+    if (sortVal === "rating") return b.rating - a.rating;
+    return 0;
+  });
+
+  return items;
+}
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+function render() {
+  const items = getFiltered();
+  const grid = document.getElementById("product-grid");
+  const empty = document.getElementById("empty-state");
+  const count = document.getElementById("results-count");
+
+  count.innerHTML = `<strong>${items.length}</strong> open box deal${items.length !== 1 ? "s" : ""} in ${DEPTS.find(d=>d.id===activeDept)?.label||""}`;
+
+  if (!items.length) {
+    grid.innerHTML = "";
+    empty.style.display = "";
+    return;
+  }
+  empty.style.display = "none";
+
+  grid.innerHTML = items.map(item => {
+    const id = `${item.sku}-${item.cond}`;
+    const isExp = expandedId === id;
+    const isHot = item.pct >= 35 || item.savings >= 600;
+    const dept = DEPTS.find(d => d.id === item.category);
+
+    const condClass = item.cond === "excellent" ? "cond-exc" : "cond-cert";
+    const condLabel = item.cond === "excellent" ? "Excellent" : item.cond === "certified" ? "Certified" : item.cond;
+
+    const specsHtml = item.specs.map(s => `<span class="spec-chip">${s}</span>`).join("");
+
+    const stars = item.rating ? Math.round(item.rating) : 0;
+    const starsHtml = stars ? `${"★".repeat(stars)}${"☆".repeat(5-stars)}` : "";
+
+    const sellNote = (() => {
+      const s = `<strong>Save $${item.savings.toFixed(2)} (${item.pct}% off)</strong>`;
+      if (item.cond === "excellent") return `Looks brand new — easiest close. Lead with ${s}. Full return window applies.`;
+      return `Geek Squad certified — passed inspection. ${s}. Arguably safer than standard open box.`;
+    })();
+
+    return `<div class="pcard${isExp ? " expanded" : ""}" data-id="${id}">
+      <div class="pc-img-wrap">
+        ${item.img
+          ? `<img class="pc-img" src="${item.img}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/><div class="pc-img-placeholder" style="display:none">${dept?.icon||"📦"}</div>`
+          : `<div class="pc-img-placeholder">${dept?.icon||"📦"}</div>`
+        }
+        <div class="pc-cond-badge ${condClass}">${condLabel}</div>
+        ${isHot ? `<div class="pc-hot">🔥 Hot</div>` : ""}
+      </div>
+      <div class="pc-body">
+        ${item.brand ? `<div class="pc-brand">${item.brand}</div>` : ""}
+        <div class="pc-name">${item.name}</div>
+        ${specsHtml ? `<div class="pc-specs">${specsHtml}</div>` : ""}
+        <div class="pc-pricing">
+          <div class="pc-price-left">
+            <div class="pc-sale">$${item.sale.toFixed(2)}</div>
+            <div class="pc-was">Was <span>$${item.reg.toFixed(2)}</span></div>
+          </div>
+          <div class="pc-save-pill">−${item.pct}% · Save $${item.savings.toFixed(0)}</div>
+        </div>
+      </div>
+      <div class="pc-footer">
+        <button class="pc-act primary" data-sku="${item.sku}" data-action="copy">📋 Copy SKU</button>
+        <button class="pc-act" data-action="lpn">🏷️ LPN</button>
+        <button class="pc-act" data-url="${item.url}" data-action="link">🔗 BB.com</button>
+      </div>
+      <div class="pc-expand${isExp ? " open" : ""}">
+        <div class="pc-expand-in">
+          <div class="expand-section">
+            <div class="expand-label">Price Breakdown</div>
+            <div class="price-breakdown">
+              <div class="pb-row"><span class="pb-label">New price</span><span class="pb-val strike">$${item.reg.toFixed(2)}</span></div>
+              <div class="pb-row"><span class="pb-label">Open box price</span><span class="pb-val blue">$${item.sale.toFixed(2)}</span></div>
+              <div class="pb-row"><span class="pb-label">You save</span><span class="pb-val green">$${item.savings.toFixed(2)} (${item.pct}% off)</span></div>
+              <div class="pb-row"><span class="pb-label">Condition</span><span class="pb-val">${condLabel}</span></div>
+              ${item.rating ? `<div class="pb-row"><span class="pb-label">Customer rating</span><span class="pb-val">${item.rating} ★ (${item.reviews.toLocaleString()} reviews)</span></div>` : ""}
+            </div>
+          </div>
+          <div class="expand-section">
+            <div class="expand-label">Sell Notes</div>
+            <div class="sell-note">${sellNote}</div>
+          </div>
+          <div class="expand-section">
+            <div class="expand-label">SKU</div>
+            <div class="sku-strip">
+              <span class="sku-mono">${item.sku}</span>
+              <button class="sku-cp" data-sku="${item.sku}" data-action="copy">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Events
+  grid.querySelectorAll(".pcard").forEach(card => {
+    card.addEventListener("click", e => {
+      if (e.target.closest("[data-action]")) return;
+      const id = card.dataset.id;
+      expandedId = expandedId === id ? null : id;
+      render();
+    });
+  });
+
+  grid.querySelectorAll("[data-action]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const action = btn.dataset.action;
+      if (action === "copy") {
+        navigator.clipboard.writeText(btn.dataset.sku).catch(() => {});
+        showToast(`SKU ${btn.dataset.sku} copied!`);
+      } else if (action === "lpn") {
+        document.getElementById("lpn-modal").classList.add("open");
+      } else if (action === "link") {
+        window.open(btn.dataset.url, "_blank");
+      }
+    });
+  });
+}
+
+function updateLiveIndicator() {
+  const el = document.getElementById("live-indicator");
+  if (IS_DEMO) {
+    el.innerHTML = `<span class="live-dot demo-dot">Sample data</span>`;
+  } else {
+    const t = lastFetch ? lastFetch.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"}) : "–";
+    el.innerHTML = `<span class="live-dot">Live · Updated ${t}</span>`;
+  }
+}
+
+// ─────────────────────────────────────────────
+//  SEARCH
+// ─────────────────────────────────────────────
+document.getElementById("search-inp").addEventListener("input", e => {
+  searchVal = e.target.value;
+  render();
+});
+
+// ─────────────────────────────────────────────
+//  AI
+// ─────────────────────────────────────────────
+const aiOv = document.getElementById("ai-ov");
+document.getElementById("ai-open-btn").addEventListener("click", () => aiOv.classList.add("open"));
+document.getElementById("ai-btn-ctrl").addEventListener("click", () => aiOv.classList.add("open"));
+document.getElementById("ai-close").addEventListener("click", () => aiOv.classList.remove("open"));
+aiOv.addEventListener("click", e => { if (e.target === aiOv) aiOv.classList.remove("open"); });
+
+document.querySelectorAll(".ai-qchip").forEach(c => {
+  c.addEventListener("click", () => { document.getElementById("ai-ta").value = c.dataset.q; });
+});
+
+document.getElementById("ai-go").addEventListener("click", async () => {
+  const query = document.getElementById("ai-ta").value.trim();
+  const btn = document.getElementById("ai-go");
+  const load = document.getElementById("ai-loading");
+  const res = document.getElementById("ai-result");
+  btn.disabled = true; load.classList.add("open"); res.classList.remove("open");
+
+  const items = getFiltered().slice(0, 10);
+  const inv = items.map(i =>
+    `- ${i.name} | ${i.cond} | $${i.sale} (was $${i.reg}, save $${i.savings}/${i.pct}% off)${i.specs.length ? " | " + i.specs.join(", ") : ""} | SKU:${i.sku}`
+  ).join("\n");
+
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: "You are a sharp Best Buy sales associate helping floor employees find the best open box deals for customers. Give punchy practical advice. Top 2-3 picks max. Mention specs when relevant. Use dollar amounts. Include one quick sell line per pick. Under 180 words. Sound like a knowledgeable colleague, not a bot.",
+        messages: [{ role: "user", content: `Query: "${query || "What are the best open box deals to push right now?"}"\n\nInventory:\n${inv || "No items."}\n\nWhat do I recommend?` }]
+      })
+    });
+    const data = await r.json();
+    res.innerHTML = (data.content?.[0]?.text || "No response.").replace(/\n/g, "<br>");
+    res.classList.add("open");
+  } catch {
+    res.innerHTML = "AI unavailable right now.";
+    res.classList.add("open");
+  }
+  btn.disabled = false; load.classList.remove("open");
+});
+
+// ─────────────────────────────────────────────
+//  LPN MODAL
+// ─────────────────────────────────────────────
+document.getElementById("lpn-close").addEventListener("click", () => document.getElementById("lpn-modal").classList.remove("open"));
+document.getElementById("lpn-modal").addEventListener("click", e => { if (e.target === document.getElementById("lpn-modal")) document.getElementById("lpn-modal").classList.remove("open"); });
+
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+function showGateErr(msg) {
+  const el = document.getElementById("gate-err");
+  el.textContent = msg; el.style.display = "block";
+}
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2300);
+}
+</script>
+</body>
+</html>
