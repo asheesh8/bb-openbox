@@ -1376,24 +1376,25 @@ function renderCardOffer() {
   const body = document.getElementById("card-offer-body");
   const quoteItems = quoteIds.map(findItem).filter(Boolean);
   const basketTotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
-  const purchaseBase = quoteItems.length ? basketTotal : 999.99;
-  const monthly12 = purchaseBase / 12;
-  const rewardCredit = purchaseBase * 0.10;
+  const membershipAttach = quoteItems.length ? membershipCost() : 0;
+  const financeBase = quoteItems.length ? basketTotal + membershipAttach : 1029.98;
+  const monthly12 = financeBase / 12;
+  const rewardCredit = (quoteItems.length ? basketTotal : 999.99) * 0.10;
   const purchaseLine = quoteItems.length
-    ? `Based on this product basket: $${basketTotal.toFixed(2)} before tax and membership.`
+    ? `Financing estimate includes products plus ${membershipName()}; store credit is products only before tax.`
     : "Add a product to show exact purchase-specific numbers.";
   const financingLabel = quoteItems.length
     ? `$${monthly12.toFixed(2)}/mo`
     : "Example: $83.33/mo";
   const financingSub = quoteItems.length
-    ? "for 12 months, if qualifying no-interest financing applies"
-    : "on a $999.99 purchase, if qualifying financing applies";
+    ? `for 12 months on $${financeBase.toFixed(2)} before tax, if qualifying financing applies`
+    : "on $999.99 product + Plus, before tax, if qualifying financing applies";
   const rewardsLabel = quoteItems.length
     ? `$${rewardCredit.toFixed(2)}`
     : "Example: $100.00";
   const rewardsSub = quoteItems.length
-    ? "estimated 10% back in store credit on this product basket"
-    : "estimated 10% back on a $999.99 purchase";
+    ? `estimated 10% back on $${basketTotal.toFixed(2)} products only, before tax`
+    : "estimated 10% back on product price only, before tax";
   if (memberSession?.hasCard) {
     kicker.textContent = "Card active";
     body.innerHTML = `
