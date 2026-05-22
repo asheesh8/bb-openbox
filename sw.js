@@ -1,4 +1,4 @@
-const CACHE_NAME = "bb-openbox-v1";
+const CACHE_NAME = "bb-openbox-v2";
 const CORE_ASSETS = [
   "/",
   "/index.html",

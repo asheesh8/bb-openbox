@@ -41,6 +41,8 @@ vercel --prod
 - One-tap SKU copy to clipboard
 - Tap any card → expand sell notes
 - AI Advisor (Claude) — type a customer scenario, get instant deal recs
+- Demo-safe local advisor fallback when external AI is unavailable
+- Expanded executive demo catalog across laptops, TVs, phones, tablets, appliances, audio, and computers
 - Hot Deal ribbon on 40%+ off items
 - Stats bar showing avg savings, best deal, excellent unit count
 
