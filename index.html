@@ -246,9 +246,9 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .results-header { max-width: 1080px; margin: 0 auto; padding: 16px 20px 10px; display: flex; align-items: center; justify-content: space-between; }
 .results-count { font-size: 13px; color: var(--ink-3); }
 .results-count strong { color: var(--ink); font-weight: 600; }
-.results-kpis { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.results-kpi { background: var(--white); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; font-size: 11px; font-weight: 700; color: var(--ink-2); }
-.results-kpi b { color: var(--blue); }
+.results-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.results-filter { background: var(--white); border: 1px solid var(--line); border-radius: 999px; padding: 4px 9px; font-size: 11px; font-weight: 700; color: var(--ink-2); }
+.results-filter b { color: var(--blue); }
 .live-dot { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: var(--green); }
 .live-dot::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; display: inline-block; }
 .demo-dot { color: var(--amber); }
@@ -1676,6 +1676,34 @@ function buildQuoteText() {
   ].join("\n");
 }
 
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[ch]));
+}
+
+function getActiveFilterChips() {
+  const chips = [];
+  const dept = DEPTS.find(d => d.id === activeDept);
+  if (dept) {
+    dept.filters.forEach(f => {
+      const value = activeFilters[f.id];
+      if (value && value !== "All") chips.push({ label: f.label, value });
+    });
+  }
+  if (activeFilters.condition && activeFilters.condition !== "All") {
+    chips.push({ label: "Condition", value: activeFilters.condition });
+  }
+  if (searchVal.trim()) {
+    chips.push({ label: "Search", value: searchVal.trim() });
+  }
+  return chips;
+}
+
 // ─────────────────────────────────────────────
 //  RENDER
 // ─────────────────────────────────────────────
@@ -1685,16 +1713,13 @@ function render() {
   const empty = document.getElementById("empty-state");
   const count = document.getElementById("results-count");
 
-  const avgSavings = items.length ? items.reduce((sum, i) => sum + i.savings, 0) / items.length : 0;
-  const bestDeal = items.length ? items.reduce((best, i) => i.savings > best.savings ? i : best, items[0]) : null;
-  const excellentCount = items.filter(i => i.cond === "excellent").length;
+  const filterChips = getActiveFilterChips();
+  const filterHtml = filterChips.length
+    ? filterChips.map(chip => `<span class="results-filter">${escapeHtml(chip.label)} <b>${escapeHtml(chip.value)}</b></span>`).join("")
+    : `<span class="results-filter">Showing <b>all ${escapeHtml(DEPTS.find(d=>d.id===activeDept)?.label || "deals")}</b></span>`;
   count.innerHTML = `
     <div><strong>${items.length}</strong> open box deal${items.length !== 1 ? "s" : ""} in ${DEPTS.find(d=>d.id===activeDept)?.label||""}</div>
-    <div class="results-kpis">
-      <span class="results-kpi">Avg save <b>$${avgSavings.toFixed(0)}</b></span>
-      <span class="results-kpi">Best save <b>${bestDeal ? `$${bestDeal.savings.toFixed(0)}` : "$0"}</b></span>
-      <span class="results-kpi">Excellent <b>${excellentCount}</b></span>
-    </div>
+    <div class="results-filters">${filterHtml}</div>
   `;
 
   if (!items.length) {
