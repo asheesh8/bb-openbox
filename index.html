@@ -141,7 +141,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 
 /* ── SALES WORKBENCH ── */
 .sales-workbench { background: var(--white); border-bottom: 1px solid var(--line); }
-.sales-workbench-in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: grid; grid-template-columns: .9fr 1fr 1fr 1fr 1.1fr; gap: 12px; align-items: stretch; }
+.sales-workbench-in { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
 .tool-panel { border: 1px solid var(--line); border-radius: var(--r12); background: var(--white); overflow: hidden; min-width: 0; }
 .tool-panel-h { min-height: 38px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line-2); }
 .tool-title { font-size: 12px; font-weight: 800; color: var(--ink); letter-spacing: .02em; }
@@ -209,6 +209,13 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .compare-name { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.25; }
 .compare-meta { font-size: 11px; color: var(--green); font-weight: 700; margin-top: 3px; }
 .icon-mini { width: 26px; height: 26px; border: none; border-radius: 50%; background: var(--white); color: var(--ink-3); cursor: pointer; font-weight: 800; }
+.favorite-list { display: grid; gap: 8px; margin-bottom: 10px; }
+.favorite-empty { min-height: 48px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: var(--r8); color: var(--ink-3); font-size: 12px; padding: 8px; text-align: center; }
+.favorite-item { display: grid; grid-template-columns: 44px 1fr auto; gap: 9px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
+.favorite-thumb { width: 44px; height: 36px; border-radius: var(--r8); border: 1px solid var(--line-2); background: var(--white); display: flex; align-items: center; justify-content: center; overflow: hidden; color: rgba(15,25,35,.28); font-size: 22px; }
+.favorite-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.favorite-name { font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.25; }
+.favorite-meta { font-size: 11px; color: var(--green); font-weight: 700; margin-top: 3px; }
 .quote-list { display: grid; gap: 8px; margin-bottom: 10px; }
 .quote-empty { min-height: 48px; display: flex; align-items: center; justify-content: center; border: 1px dashed var(--line); border-radius: var(--r8); color: var(--ink-3); font-size: 12px; padding: 8px; text-align: center; }
 .quote-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; font-size: 12px; border-bottom: 1px solid var(--line-2); padding-bottom: 8px; }
@@ -273,7 +280,10 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .cond-cert { background: #EEF2FF; color: #4F46E5; }
 .cond-good { background: var(--amber-bg); color: var(--amber); }
 .cond-sat { background: var(--red-bg); color: var(--red); }
-.pc-hot { position: absolute; top: 12px; right: 12px; background: var(--red); color: white; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: var(--r4); letter-spacing: .05em; text-transform: uppercase; }
+.favorite-toggle { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border: 1px solid rgba(15,25,35,.1); border-radius: 50%; background: rgba(255,255,255,.92); color: var(--ink-3); display: flex; align-items: center; justify-content: center; font-size: 18px; line-height: 1; cursor: pointer; box-shadow: 0 4px 14px rgba(15,25,35,.12); transition: transform .12s, color .12s, background .12s, border-color .12s; z-index: 2; }
+.favorite-toggle:hover { transform: scale(1.06); color: var(--red); border-color: rgba(185,28,28,.2); }
+.favorite-toggle.on { background: var(--red); color: var(--white); border-color: var(--red); }
+.pc-hot { position: absolute; top: 50px; right: 12px; background: var(--red); color: white; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: var(--r4); letter-spacing: .05em; text-transform: uppercase; }
 
 /* card body */
 .pc-body { padding: 16px; }
@@ -504,7 +514,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
         </div>
       </div>
     </div>
-    <div class="gate-credit">Built by <a href="https://ashish-portfolio-rust.vercel.app" target="_blank">Ashish Subedi</a> · Store 360, Williston VT</div>
+    <div class="gate-credit">Built by <a href="https://ashish.network" target="_blank">Ashish Subedi</a> · Store 360, Williston VT</div>
   </div>
 </div>
 
@@ -634,6 +644,19 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
           </div>
         </div>
       </div>
+      <div class="tool-panel" id="favorites-panel">
+        <div class="tool-panel-h">
+          <span class="tool-title">Favorites</span>
+          <span class="tool-kicker" id="favorite-kicker">0 saved</span>
+        </div>
+        <div class="tool-body">
+          <div class="favorite-list" id="favorite-list"></div>
+          <div class="quote-actions">
+            <button class="mini-btn light" id="clear-favorites-btn" type="button">Clear</button>
+            <button class="mini-btn" id="copy-favorites-btn" type="button">Copy List</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -653,7 +676,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
     </div>
   </div>
 
-  <div class="app-footer">Built by <a href="https://ashish-portfolio-rust.vercel.app" target="_blank">Ashish Subedi</a> · Best Buy Store 360, Williston VT</div>
+  <div class="app-footer">Built by <a href="https://ashish.network" target="_blank">Ashish Subedi</a> · Best Buy Store 360, Williston VT</div>
 </div>
 <button class="quote-fab" id="quote-fab" type="button" aria-label="Open customer basket">
   <span class="quote-fab-icon" aria-hidden="true">🧺<span class="quote-fab-count" id="quote-fab-count">0</span></span>
@@ -989,6 +1012,7 @@ let activeStoreId = localStorage.getItem("bb_store") || "360";
 let authRole = "";
 let compareIds = [];
 let quoteIds = [];
+let favoriteIds = loadFavorites();
 let memberPlan = "plus";
 let memberSession = null;
 let deferredInstallPrompt = null;
@@ -1111,6 +1135,20 @@ document.getElementById("copy-quote-btn").addEventListener("click", () => {
   const text = buildQuoteText();
   navigator.clipboard.writeText(text).catch(() => {});
   showToast("Quote copied for customer recap");
+});
+
+document.getElementById("clear-favorites-btn").addEventListener("click", () => {
+  favoriteIds = [];
+  saveFavorites();
+  renderSalesTools();
+  render();
+  showToast("Favorites cleared");
+});
+
+document.getElementById("copy-favorites-btn").addEventListener("click", () => {
+  const text = buildFavoritesText();
+  navigator.clipboard.writeText(text).catch(() => {});
+  showToast(favoriteIds.length ? "Favorites list copied" : "No favorites to copy");
 });
 
 document.getElementById("quote-fab").addEventListener("click", () => {
@@ -1420,6 +1458,19 @@ function findItem(id) {
   return ALL_ITEMS.find(i => itemId(i) === id);
 }
 
+function loadFavorites() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem("bb_favorites") || "[]");
+    return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveFavorites() {
+  localStorage.setItem("bb_favorites", JSON.stringify(favoriteIds));
+}
+
 function membershipCost() {
   return memberPlan === "total" ? 179.99 : 29.99;
 }
@@ -1655,6 +1706,37 @@ function renderSalesTools() {
       render();
     });
   });
+
+  favoriteIds = favoriteIds.filter(id => findItem(id));
+  saveFavorites();
+  const favoriteItems = favoriteIds.map(findItem).filter(Boolean);
+  const favoriteList = document.getElementById("favorite-list");
+  document.getElementById("favorite-kicker").textContent = `${favoriteItems.length} saved`;
+  favoriteList.innerHTML = favoriteItems.length ? favoriteItems.map(i => {
+    const dept = DEPTS.find(d => d.id === i.category);
+    const thumb = i.img
+      ? `<img src="${i.img}" alt="" onerror="this.style.display='none';this.parentElement.textContent='${dept?.icon || "📦"}'"/>`
+      : `${dept?.icon || "📦"}`;
+    return `
+      <div class="favorite-item">
+        <div class="favorite-thumb">${thumb}</div>
+        <div>
+          <div class="favorite-name">${i.name}</div>
+          <div class="favorite-meta">$${i.sale.toFixed(2)} · Save $${i.savings.toFixed(0)} · ${i.cond}</div>
+        </div>
+        <button class="icon-mini" data-remove-favorite="${itemId(i)}" type="button">×</button>
+      </div>
+    `;
+  }).join("") : `<div class="favorite-empty">Tap hearts on products to keep them here</div>`;
+
+  document.querySelectorAll("[data-remove-favorite]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      favoriteIds = favoriteIds.filter(id => id !== btn.dataset.removeFavorite);
+      saveFavorites();
+      renderSalesTools();
+      render();
+    });
+  });
 }
 
 function buildQuoteText() {
@@ -1673,6 +1755,16 @@ function buildQuoteText() {
     `Estimated tax (${(store.tax * 100).toFixed(2)}%): $${tax.toFixed(2)}`,
     `Estimated basket: $${(taxable + tax).toFixed(2)}`,
     `Open box savings: $${savings.toFixed(2)}`,
+  ].join("\n");
+}
+
+function buildFavoritesText() {
+  const favoriteItems = favoriteIds.map(findItem).filter(Boolean);
+  if (!favoriteItems.length) return "Open Box Finder favorites: no products saved yet.";
+  const store = getActiveStore();
+  return [
+    `Open Box Finder favorites · Store ${store.bbStoreId} ${store.city}, ${store.state}:`,
+    ...favoriteItems.map(i => `${i.name} - $${i.sale.toFixed(2)} open box (${i.cond}), save $${i.savings.toFixed(2)}. SKU ${i.sku}`),
   ].join("\n");
 }
 
@@ -1736,6 +1828,7 @@ function render() {
     const dept = DEPTS.find(d => d.id === item.category);
     const inCompare = compareIds.includes(id);
     const inQuote = quoteIds.includes(id);
+    const isFavorite = favoriteIds.includes(id);
 
     const condClass = item.cond === "excellent" ? "cond-exc" : item.cond === "certified" ? "cond-cert" : item.cond === "good" ? "cond-good" : "cond-sat";
     const condLabel = item.cond === "excellent" ? "Excellent" : item.cond === "certified" ? "Certified" : item.cond === "good" ? "Good" : "Satisfactory";
@@ -1760,6 +1853,7 @@ function render() {
           : `<div class="pc-img-placeholder">${dept?.icon||"📦"}</div>`
         }
         <div class="pc-cond-badge ${condClass}">${condLabel}</div>
+        <button class="favorite-toggle${isFavorite ? " on" : ""}" data-id="${id}" data-action="favorite" type="button" aria-label="${isFavorite ? "Remove from favorites" : "Add to favorites"}" title="${isFavorite ? "Remove from favorites" : "Add to favorites"}">♥</button>
         ${isHot ? `<div class="pc-hot">🔥 Hot</div>` : ""}
       </div>
       <div class="pc-body">
@@ -1844,6 +1938,18 @@ function render() {
         } else {
           quoteIds.push(id);
         }
+        renderSalesTools();
+        render();
+      } else if (action === "favorite") {
+        const id = btn.dataset.id;
+        if (favoriteIds.includes(id)) {
+          favoriteIds = favoriteIds.filter(x => x !== id);
+          showToast("Removed from favorites");
+        } else {
+          favoriteIds.push(id);
+          showToast("Saved to favorites");
+        }
+        saveFavorites();
         renderSalesTools();
         render();
       } else if (action === "lpn") {
