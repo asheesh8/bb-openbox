@@ -982,7 +982,7 @@ let ALL_ITEMS = [];
 let activeDept = DEPTS[0].id;
 let activeFilters = {};
 let searchVal = "";
-let sortVal = "savings";
+let sortVal = "price_asc";
 let expandedId = null;
 let lastFetch = null;
 let activeStoreId = localStorage.getItem("bb_store") || "360";
@@ -1286,7 +1286,7 @@ function resetFilters() {
   const dept = DEPTS.find(d => d.id === activeDept);
   if (dept) dept.filters.forEach(f => { activeFilters[f.id] = "All"; });
   activeFilters.condition = "All";
-  sortVal = "savings";
+  sortVal = "price_asc";
 }
 
 // ─────────────────────────────────────────────
@@ -1321,11 +1321,10 @@ function buildDeptFilters() {
   // Sort always
   html += `<div class="filter-sep"></div>`;
   html += `<select class="sort-select" id="sort-select">
-    <option value="savings"${sortVal==="savings"?" selected":""}>$ Saved</option>
-    <option value="pct"${sortVal==="pct"?" selected":""}>% Off</option>
-    <option value="price_asc"${sortVal==="price_asc"?" selected":""}>Price ↑</option>
-    <option value="price_desc"${sortVal==="price_desc"?" selected":""}>Price ↓</option>
-    <option value="rating"${sortVal==="rating"?" selected":""}>Rating</option>
+    <option value="price_asc"${sortVal==="price_asc"?" selected":""}>Price increasing</option>
+    <option value="price_desc"${sortVal==="price_desc"?" selected":""}>Price decreasing</option>
+    <option value="name_asc"${sortVal==="name_asc"?" selected":""}>A-Z</option>
+    <option value="name_desc"${sortVal==="name_desc"?" selected":""}>Z-A</option>
   </select>`;
 
   el.innerHTML = html;
@@ -1401,11 +1400,10 @@ function getFiltered() {
 
   // Sort
   items.sort((a, b) => {
-    if (sortVal === "savings") return b.savings - a.savings;
-    if (sortVal === "pct") return b.pct - a.pct;
     if (sortVal === "price_asc") return a.sale - b.sale;
     if (sortVal === "price_desc") return b.sale - a.sale;
-    if (sortVal === "rating") return b.rating - a.rating;
+    if (sortVal === "name_asc") return a.name.localeCompare(b.name);
+    if (sortVal === "name_desc") return b.name.localeCompare(a.name);
     return 0;
   });
 
