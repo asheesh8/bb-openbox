@@ -377,6 +377,10 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .modal-h { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
 .modal-p { font-size: 13px; color: var(--ink-3); line-height: 1.7; margin-bottom: 22px; }
 .modal-close { width: 100%; height: 46px; background: var(--blue); color: white; border: none; border-radius: var(--r12); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.modal-actions .modal-close { width: auto; }
+.modal-close.light { background: var(--white); color: var(--blue); border: 1.5px solid var(--blue); }
+.favorite-modal-name { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r8); padding: 10px 12px; font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.35; margin-bottom: 18px; }
 
 /* ── TOAST ── */
 .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: white; padding: 11px 22px; border-radius: 24px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(15,25,35,.2); z-index: 999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; }
@@ -462,6 +466,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .quote-fab-icon { font-size: 24px; line-height: 1; position: relative; }
   .quote-fab-count { position: absolute; top: -9px; right: -11px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--yellow); color: var(--blue); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid var(--ink); }
   .quote-fab-total { font-size: 12px; font-weight: 900; line-height: 1; white-space: nowrap; }
+  .modal-actions { grid-template-columns: 1fr; }
   .install-prompt { bottom: 12px; grid-template-columns: 38px 1fr; }
   .install-actions { grid-column: 1 / -1; justify-content: flex-end; }
 }
@@ -719,6 +724,19 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
     <div class="modal-h">LPN Integration</div>
     <div class="modal-p">LPN (License Plate Number) data lives exclusively in Best Buy's internal IROC system and isn't accessible through the public API.<br/><br/><strong>V2 roadmap:</strong> Direct IROC integration would auto-populate every open box unit's LPN, condition notes, and damage descriptions.</div>
     <button class="modal-close" id="lpn-close">Got it</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="favorite-modal">
+  <div class="modal-box">
+    <div class="modal-emoji">♥</div>
+    <div class="modal-tag">Saved</div>
+    <div class="modal-h">Added to Favorites</div>
+    <div class="favorite-modal-name" id="favorite-modal-name"></div>
+    <div class="modal-actions">
+      <button class="modal-close light" id="favorite-modal-close" type="button">Keep Browsing</button>
+      <button class="modal-close" id="favorite-modal-view" type="button">View Favorites</button>
+    </div>
   </div>
 </div>
 
@@ -1947,7 +1965,7 @@ function render() {
           showToast("Removed from favorites");
         } else {
           favoriteIds.push(id);
-          showToast("Saved to favorites");
+          showFavoriteSavedPopup(findItem(id));
         }
         saveFavorites();
         renderSalesTools();
@@ -2062,6 +2080,13 @@ function buildLocalAdvisor(query, items) {
 document.getElementById("lpn-close").addEventListener("click", () => document.getElementById("lpn-modal").classList.remove("open"));
 document.getElementById("lpn-modal").addEventListener("click", e => { if (e.target === document.getElementById("lpn-modal")) document.getElementById("lpn-modal").classList.remove("open"); });
 
+document.getElementById("favorite-modal-close").addEventListener("click", () => document.getElementById("favorite-modal").classList.remove("open"));
+document.getElementById("favorite-modal-view").addEventListener("click", () => {
+  document.getElementById("favorite-modal").classList.remove("open");
+  document.getElementById("favorites-panel").scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+});
+document.getElementById("favorite-modal").addEventListener("click", e => { if (e.target === document.getElementById("favorite-modal")) document.getElementById("favorite-modal").classList.remove("open"); });
+
 // ─────────────────────────────────────────────
 //  HELPERS
 // ─────────────────────────────────────────────
@@ -2073,6 +2098,12 @@ function showToast(msg) {
   const t = document.getElementById("toast");
   t.textContent = msg; t.classList.add("show");
   setTimeout(() => t.classList.remove("show"), 2300);
+}
+
+function showFavoriteSavedPopup(item) {
+  const modal = document.getElementById("favorite-modal");
+  document.getElementById("favorite-modal-name").textContent = item ? item.name : "Open box deal";
+  modal.classList.add("open");
 }
 
 function registerPwa() {
