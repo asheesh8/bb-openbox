@@ -380,11 +380,12 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .modal-actions .modal-close { width: auto; }
 .modal-close.light { background: var(--white); color: var(--blue); border: 1.5px solid var(--blue); }
-.favorite-modal-name { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r8); padding: 10px 12px; font-size: 12px; font-weight: 800; color: var(--ink); line-height: 1.35; margin-bottom: 18px; }
+.favorites-modal-list { display: grid; gap: 8px; max-height: min(48vh, 360px); overflow-y: auto; margin: 16px 0 18px; text-align: left; }
 
 /* ── TOAST ── */
-.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: white; padding: 11px 22px; border-radius: 24px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(15,25,35,.2); z-index: 999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; }
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: white; padding: 9px 10px 9px 16px; border-radius: 24px; font-size: 13px; font-weight: 500; box-shadow: 0 8px 32px rgba(15,25,35,.2); z-index: 999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; display: flex; align-items: center; gap: 10px; }
 .toast.show { transform: translateX(-50%) translateY(0); }
+.toast-action { min-height: 30px; border: none; border-radius: 999px; background: var(--yellow); color: var(--blue); padding: 0 12px; font-family: inherit; font-size: 12px; font-weight: 900; cursor: pointer; }
 
 /* ── INSTALL PROMPT ── */
 .install-prompt { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(120%); width: min(392px, calc(100% - 24px)); background: var(--white); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 18px 50px rgba(15,25,35,.22); z-index: 650; padding: 12px; display: grid; grid-template-columns: 42px 1fr auto; gap: 10px; align-items: center; transition: transform .28s cubic-bezier(.2,.9,.2,1); }
@@ -730,12 +731,12 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 <div class="modal-bg" id="favorite-modal">
   <div class="modal-box">
     <div class="modal-emoji">♥</div>
-    <div class="modal-tag">Saved</div>
-    <div class="modal-h">Added to Favorites</div>
-    <div class="favorite-modal-name" id="favorite-modal-name"></div>
+    <div class="modal-tag">Favorites</div>
+    <div class="modal-h">Saved Open Box Deals</div>
+    <div class="favorites-modal-list" id="favorites-modal-list"></div>
     <div class="modal-actions">
-      <button class="modal-close light" id="favorite-modal-close" type="button">Keep Browsing</button>
-      <button class="modal-close" id="favorite-modal-view" type="button">View Favorites</button>
+      <button class="modal-close light" id="favorite-modal-close" type="button">Close</button>
+      <button class="modal-close" id="favorite-modal-panel" type="button">Go to Panel</button>
     </div>
   </div>
 </div>
@@ -1965,7 +1966,7 @@ function render() {
           showToast("Removed from favorites");
         } else {
           favoriteIds.push(id);
-          showFavoriteSavedPopup(findItem(id));
+          showFavoriteSavedToast();
         }
         saveFavorites();
         renderSalesTools();
@@ -2081,7 +2082,7 @@ document.getElementById("lpn-close").addEventListener("click", () => document.ge
 document.getElementById("lpn-modal").addEventListener("click", e => { if (e.target === document.getElementById("lpn-modal")) document.getElementById("lpn-modal").classList.remove("open"); });
 
 document.getElementById("favorite-modal-close").addEventListener("click", () => document.getElementById("favorite-modal").classList.remove("open"));
-document.getElementById("favorite-modal-view").addEventListener("click", () => {
+document.getElementById("favorite-modal-panel").addEventListener("click", () => {
   document.getElementById("favorite-modal").classList.remove("open");
   document.getElementById("favorites-panel").scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
 });
@@ -2094,15 +2095,45 @@ function showGateErr(msg) {
   const el = document.getElementById("gate-err");
   el.textContent = msg; el.style.display = "block";
 }
-function showToast(msg) {
+let toastTimer = null;
+function showToast(msg, action) {
   const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2300);
+  if (toastTimer) clearTimeout(toastTimer);
+  t.classList.remove("show");
+  t.innerHTML = `<span>${escapeHtml(msg)}</span>${action ? `<button class="toast-action" type="button">${escapeHtml(action.label)}</button>` : ""}`;
+  if (action) {
+    t.querySelector(".toast-action").addEventListener("click", () => {
+      t.classList.remove("show");
+      action.onClick();
+    });
+  }
+  requestAnimationFrame(() => t.classList.add("show"));
+  toastTimer = setTimeout(() => t.classList.remove("show"), action ? 4200 : 2300);
 }
 
-function showFavoriteSavedPopup(item) {
+function showFavoriteSavedToast() {
+  showToast("Saved to favorites", {
+    label: "View",
+    onClick: openFavoritesPopup,
+  });
+}
+
+function openFavoritesPopup() {
   const modal = document.getElementById("favorite-modal");
-  document.getElementById("favorite-modal-name").textContent = item ? item.name : "Open box deal";
+  const list = document.getElementById("favorites-modal-list");
+  const favoriteItems = favoriteIds.map(findItem).filter(Boolean);
+  list.innerHTML = favoriteItems.length
+    ? document.getElementById("favorite-list").innerHTML
+    : `<div class="favorite-empty">Tap hearts on products to keep them here</div>`;
+  list.querySelectorAll("[data-remove-favorite]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      favoriteIds = favoriteIds.filter(id => id !== btn.dataset.removeFavorite);
+      saveFavorites();
+      renderSalesTools();
+      render();
+      openFavoritesPopup();
+    });
+  });
   modal.classList.add("open");
 }
 
