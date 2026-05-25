@@ -55,3 +55,31 @@ Key talking points:
 - Faster open box turnover = less depreciation write-down for corporate
 - Associate confidence goes up → more open box sold
 - Could integrate directly into Best Buy Connect with employee SSO
+
+---
+
+## Project Structure
+
+```text
+index.html                                      # Static document shell and app markup
+src/styles/openBoxFinder.css                    # App styling
+src/scripts/openBoxFinderApp.js                 # Main app controller and UI events
+src/scripts/config/productDepartments.js        # Department tabs, filters, and parsers
+src/scripts/config/storeLocations.js            # Store IDs, tax, and pickup context
+src/scripts/data/sampleOpenBoxItems.js          # Demo catalog data
+src/scripts/services/bestBuyInventoryApi.js     # Best Buy API access and data mapping
+docs/uml.md                                     # Mermaid UML diagrams
+sw.js                                           # PWA service worker cache
+```
+
+For local testing:
+
+```bash
+npm run dev
+```
+
+For a quick syntax check:
+
+```bash
+npm run check
+```

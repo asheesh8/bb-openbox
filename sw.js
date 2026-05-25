@@ -1,8 +1,14 @@
-const CACHE_NAME = "bb-openbox-v2";
+const CACHE_NAME = "bb-openbox-v4";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
+  "/src/styles/openBoxFinder.css",
+  "/src/scripts/openBoxFinderApp.js",
+  "/src/scripts/config/productDepartments.js",
+  "/src/scripts/config/storeLocations.js",
+  "/src/scripts/data/sampleOpenBoxItems.js",
+  "/src/scripts/services/bestBuyInventoryApi.js",
   "/assets/app-icon.svg",
   "/assets/app-icon-512.png",
   "/assets/apple-touch-icon.png"

@@ -1,0 +1,10 @@
+{
+  "name": "bb-openbox",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 4173",
+    "check": "node --check src/scripts/openBoxFinderApp.js && node --check src/scripts/config/productDepartments.js && node --check src/scripts/config/storeLocations.js && node --check src/scripts/data/sampleOpenBoxItems.js && node --check src/scripts/services/bestBuyInventoryApi.js"
+  }
+}
