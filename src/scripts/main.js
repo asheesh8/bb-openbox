@@ -40,7 +40,10 @@ setupFavoritesModal();
 setupAiAdvisor();
 wireStaticEventListeners();
 
-// Skip the gate if we already have a stored API key.
+// Decide what to show on load:
+//   ?demo=1 in the URL → jump straight into sample data (useful for sharing a demo link)
+//   stored API key     → go straight to live inventory
+//   otherwise          → show the gate so the associate can enter a key or tap Sample Data
 const searchParams = new URLSearchParams(window.location.search);
 if (searchParams.get("demo") === "1") {
   searchParams.delete("demo");
@@ -52,8 +55,8 @@ if (searchParams.get("demo") === "1") {
   document.getElementById("gate").style.display = "none";
   startApp(false);
 } else {
-  document.getElementById("gate").style.display = "none";
-  startApp(true);
+  // No key stored — show the gate. Associate can enter a key or tap Sample Data.
+  document.getElementById("gate").style.display = "flex";
 }
 
 // ─────────────────────────────────────────────
@@ -189,10 +192,15 @@ function wireStaticEventListeners() {
     }
   });
 
-  // Settings / logout — clears stored API key and reloads.
+  // Settings / cog — clears the stored API key and returns to the gate screen.
+  // No reload needed; the app stays in memory so re-entering a key is instant.
   document.getElementById("settings-btn").addEventListener("click", () => {
     clearApiKey();
-    location.reload();
+    state.apiKey = "";
+    document.getElementById("app").classList.remove("on");
+    document.getElementById("gate").style.display = "flex";
+    document.getElementById("gate-err").style.display = "none";
+    document.getElementById("api-key").value = "";
   });
 
   // Manual inventory refresh button.
