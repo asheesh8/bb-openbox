@@ -41,11 +41,19 @@ setupAiAdvisor();
 wireStaticEventListeners();
 
 // Skip the gate if we already have a stored API key.
-if (state.apiKey) {
+const searchParams = new URLSearchParams(window.location.search);
+if (searchParams.get("demo") === "1") {
+  searchParams.delete("demo");
+  const cleanUrl = `${window.location.pathname}${searchParams.toString() ? `?${searchParams}` : ""}${window.location.hash}`;
+  window.history.replaceState({}, "", cleanUrl);
+  document.getElementById("gate").style.display = "none";
+  startApp(true);
+} else if (state.apiKey) {
   document.getElementById("gate").style.display = "none";
   startApp(false);
 } else {
-  document.getElementById("gate").style.display = "flex";
+  document.getElementById("gate").style.display = "none";
+  startApp(true);
 }
 
 // ─────────────────────────────────────────────
@@ -57,27 +65,33 @@ async function startApp(demo) {
   const loading = document.getElementById("loading");
   loading.style.display = "flex";
 
-  if (!demo) {
-    document.getElementById("load-label").textContent = "Fetching live open box inventory…";
-    document.getElementById("load-cat").textContent = "Connecting to Best Buy API";
-    state.allProducts = await loadLiveInventory();
-  } else {
-    state.allProducts = DEMO_ITEMS;
-    await new Promise(r => setTimeout(r, 600)); // brief loading feel for demo
+  try {
+    if (!demo) {
+      document.getElementById("load-label").textContent = "Fetching live open box inventory…";
+      document.getElementById("load-cat").textContent = "Connecting to Best Buy API";
+      state.allProducts = await loadLiveInventory();
+    } else {
+      state.allProducts = DEMO_ITEMS;
+    }
+
+    loading.style.display = "none";
+    document.getElementById("app").classList.add("on");
+    state.lastFetchedAt = new Date();
+
+    renderStoreDropdown();
+    renderStoreSummary();
+    renderDepartmentTabs();
+    resetFiltersForDept();
+    renderFilterBar();
+    renderProductGrid();
+    renderSalesWorkbench();
+    renderInventoryStatus();
+  } catch (err) {
+    console.error("App startup failed", err);
+    loading.style.display = "none";
+    document.getElementById("gate").style.display = "flex";
+    showGateError("Sample data could not load. Refresh once and try again.");
   }
-
-  loading.style.display = "none";
-  document.getElementById("app").classList.add("on");
-  state.lastFetchedAt = new Date();
-
-  renderStoreDropdown();
-  renderStoreSummary();
-  renderDepartmentTabs();
-  resetFiltersForDept();
-  renderFilterBar();
-  renderProductGrid();
-  renderSalesWorkbench();
-  renderInventoryStatus();
 }
 
 // Pulls live inventory for the currently selected store via the Best Buy API.
@@ -116,7 +130,11 @@ document.getElementById("gate-btn").addEventListener("click", async () => {
   }
 });
 
-document.getElementById("demo-btn").addEventListener("click", () => {
+document.getElementById("demo-btn").addEventListener("click", e => {
+  e.preventDefault();
+  const btn = document.getElementById("demo-btn");
+  btn.setAttribute("aria-disabled", "true");
+  btn.textContent = "Opening sample data...";
   document.getElementById("gate").style.display = "none";
   startApp(true);
 });

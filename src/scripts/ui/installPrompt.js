@@ -19,6 +19,8 @@ export function setupInstallPrompt() {
   const dismissed = getInstallDismissed();
 
   const showPrompt = () => {
+    const appIsOpen = document.getElementById("app")?.classList.contains("on");
+    if (!appIsOpen) return;
     if (isStandalone || dismissed) return;
     prompt.classList.add("show");
   };
@@ -57,7 +59,16 @@ export function setupInstallPrompt() {
 
 export function registerServiceWorker() {
   if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
+  let refreshedForController = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshedForController) return;
+    refreshedForController = true;
+    window.location.reload();
+  });
+
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker.register("/sw.js")
+      .then(reg => reg.update().catch(() => {}))
+      .catch(() => {});
   });
 }

@@ -20,6 +20,7 @@ export function renderSalesWorkbench() {
   renderMembershipAttach();
   renderMemberPanel();
   renderBestBuyCardOffer();
+  renderMicrosoft365Panel();
   renderComparePanel();
   renderQuotePanel();
   renderFavoritesPanel();
@@ -186,6 +187,51 @@ function renderBestBuyCardOffer() {
         <li>First-day rewards/financing offers depend on approval and eligible promos</li>
       </ul>`;
   }
+}
+
+// ─── Microsoft 365 Panel ─────────────────────────────────────
+
+function renderMicrosoft365Panel() {
+  const panel = document.getElementById("m365-panel");
+  const body = document.getElementById("m365-body");
+  const kicker = document.getElementById("m365-kicker");
+  if (!panel || !body || !kicker) return;
+
+  const isComputerSale = state.selectedDeptId === "computers";
+  panel.hidden = !isComputerSale;
+  panel.classList.toggle("show", isComputerSale);
+  if (!isComputerSale) {
+    body.innerHTML = "";
+    return;
+  }
+
+  kicker.textContent = "Recommended";
+  body.innerHTML = `
+    <div class="m365-hero">
+      <div class="m365-icon" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div>
+        <div class="m365-title">Add Microsoft 365 to complete the computer</div>
+        <div class="m365-copy">The easiest yes for customers who need Word, Excel, PowerPoint, Outlook, storage, and protection ready on day one.</div>
+      </div>
+    </div>
+    <div class="m365-benefits">
+      <div class="m365-benefit">
+        <span class="m365-benefit-icon">✓</span>
+        <div><strong>Office apps they already know</strong><span>Documents, budgets, schoolwork, resumes, and presentations without app hunting later.</span></div>
+      </div>
+      <div class="m365-benefit">
+        <span class="m365-benefit-icon">☁</span>
+        <div><strong>1 TB OneDrive backup</strong><span>Photos and files move with them if the computer is lost, damaged, or replaced.</span></div>
+      </div>
+      <div class="m365-benefit">
+        <span class="m365-benefit-icon">✦</span>
+        <div><strong>Best everyday value</strong><span>Recommend it because it makes the new PC more useful, safer, and easier to share across devices.</span></div>
+      </div>
+    </div>
+    <div class="m365-close-line">Quick close: "Do you want Office and cloud backup set up with the computer today?"</div>
+  `;
 }
 
 // ─── Compare Panel ───────────────────────────────────────────
