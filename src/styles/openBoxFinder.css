@@ -187,22 +187,21 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .card-benefit-list { list-style: none; display: grid; gap: 7px; }
 .card-benefit-list li { position: relative; padding-left: 15px; font-size: 12px; font-weight: 650; line-height: 1.35; color: var(--ink-2); }
 .card-benefit-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--yellow-dim); }
-.m365-panel { display: none; }
-.m365-panel.show { display: block; }
-.m365-hero { border: 1px solid #D9E7FF; border-radius: var(--r8); background: linear-gradient(135deg, #F8FBFF, #EEF5FF); padding: 12px; display: grid; grid-template-columns: 46px 1fr; gap: 11px; align-items: center; margin-bottom: 10px; }
-.m365-icon { width: 46px; height: 46px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 5px; border-radius: 12px; background: var(--white); border: 1px solid #D8E2EC; box-shadow: 0 2px 8px rgba(15,25,35,.06); }
-.m365-icon span:nth-child(1) { background: #F25022; border-radius: 5px 2px 2px 2px; }
-.m365-icon span:nth-child(2) { background: #7FBA00; border-radius: 2px 5px 2px 2px; }
-.m365-icon span:nth-child(3) { background: #00A4EF; border-radius: 2px 2px 2px 5px; }
-.m365-icon span:nth-child(4) { background: #FFB900; border-radius: 2px 2px 5px 2px; }
-.m365-title { font-size: 14px; font-weight: 900; color: var(--ink); line-height: 1.18; margin-bottom: 4px; }
-.m365-copy { font-size: 11px; line-height: 1.4; color: var(--ink-3); font-weight: 650; }
-.m365-benefits { display: grid; gap: 8px; }
-.m365-benefit { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: start; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r8); padding: 9px; }
-.m365-benefit-icon { width: 26px; height: 26px; border-radius: 8px; background: var(--blue); color: var(--white); display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; line-height: 1; }
-.m365-benefit strong { display: block; font-size: 12px; font-weight: 900; color: var(--ink); line-height: 1.25; margin-bottom: 2px; }
-.m365-benefit span:last-child { display: block; font-size: 11px; line-height: 1.35; color: var(--ink-3); font-weight: 650; }
-.m365-close-line { margin-top: 10px; border-radius: var(--r8); background: #FFF9D8; border: 1px solid #F2E993; color: var(--ink); padding: 9px 10px; font-size: 11px; font-weight: 800; line-height: 1.35; }
+/* ── Microsoft 365 contextual banner (above product grid, Laptops + Computers) ── */
+.m365-banner { background: linear-gradient(135deg, #EEF5FF, #F8FBFF); border-top: 1px solid #C8DCFF; border-bottom: 1px solid #C8DCFF; }
+.m365-banner-in { max-width: 1080px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.m365-hero { display: flex; align-items: center; gap: 11px; flex: 0 0 auto; }
+.m365-icon { width: 40px; height: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 5px; border-radius: 10px; background: var(--white); border: 1px solid #D8E2EC; box-shadow: 0 2px 6px rgba(15,25,35,.07); flex-shrink: 0; }
+.m365-icon span:nth-child(1) { background: #F25022; border-radius: 4px 2px 2px 2px; }
+.m365-icon span:nth-child(2) { background: #7FBA00; border-radius: 2px 4px 2px 2px; }
+.m365-icon span:nth-child(3) { background: #00A4EF; border-radius: 2px 2px 2px 4px; }
+.m365-icon span:nth-child(4) { background: #FFB900; border-radius: 2px 2px 4px 2px; }
+.m365-title { font-size: 13px; font-weight: 900; color: var(--ink); line-height: 1.2; }
+.m365-copy { font-size: 11px; line-height: 1.35; color: var(--ink-3); font-weight: 650; margin-top: 2px; }
+.m365-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+.m365-pill { display: flex; align-items: center; gap: 5px; background: var(--white); border: 1px solid #D0DFFF; border-radius: 999px; padding: 4px 10px 4px 6px; font-size: 11px; font-weight: 750; color: var(--ink-2); white-space: nowrap; }
+.m365-pill-icon { font-size: 12px; line-height: 1; }
+.m365-pill.m365-close { background: #FFF9D8; border-color: #F2E993; color: var(--ink); font-weight: 800; border-radius: var(--r8); white-space: normal; flex: 1 1 100%; }
 .compare-slots { display: grid; gap: 8px; }
 .compare-empty { border: 1px dashed var(--line); border-radius: var(--r8); min-height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; text-align: center; padding: 8px; }
 .compare-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
@@ -437,7 +436,6 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .sales-workbench-in { display: flex; overflow-x: auto; padding: 12px; gap: 10px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
   .sales-workbench-in::-webkit-scrollbar { display: none; }
   .tool-panel { border-radius: 12px; flex: 0 0 86%; scroll-snap-align: start; box-shadow: 0 2px 10px rgba(15,25,35,.04); }
-  .m365-panel.show { display: block; }
   .tool-panel-h { min-height: 42px; padding: 11px 12px; }
   .tool-title { font-size: 13px; }
   .tool-body { padding: 12px; }

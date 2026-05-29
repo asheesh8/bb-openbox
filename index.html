@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png"/>
 <title>Open Box — Best Buy Connect</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="src/styles/openBoxFinder.css"/>
+<link rel="stylesheet" href="src/styles/openBoxFinder.css?v=8"/>
 </head>
 <body>
 
@@ -29,8 +29,8 @@
     <div class="gate-label">API Key</div>
     <div class="gate-err" id="gate-err"></div>
     <input class="gate-input" id="api-key" type="text" placeholder="Paste key here…" autocomplete="off" autocorrect="off" spellcheck="false"/>
-    <button class="gate-cta" id="gate-btn">Connect →</button>
-    <button class="gate-secondary" id="demo-btn">Continue with sample data</button>
+    <button class="gate-cta" id="gate-btn" type="button">Connect →</button>
+    <a class="gate-secondary" id="demo-btn" href="?demo=1">Continue with sample data</a>
     <div class="gate-more" id="gate-more">
       <button class="gate-more-toggle" id="gate-more-toggle" type="button" aria-expanded="false">
         <span>
@@ -214,6 +214,9 @@
     <div id="live-indicator"></div>
   </div>
 
+  <!-- M365 CONTEXTUAL BANNER (shown only when Computers dept is active) -->
+  <div id="m365-banner" class="m365-banner" hidden></div>
+
   <!-- GRID -->
   <div class="grid-wrap">
     <div class="product-grid" id="product-grid"></div>
@@ -296,6 +299,6 @@
   </div>
 </div>
 
-<script type="module" src="src/scripts/main.js"></script>
+<script type="module" src="src/scripts/main.js?v=8"></script>
 </body>
 </html>

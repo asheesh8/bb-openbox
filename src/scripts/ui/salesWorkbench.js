@@ -189,48 +189,39 @@ function renderBestBuyCardOffer() {
   }
 }
 
-// ─── Microsoft 365 Panel ─────────────────────────────────────
+// ─── Microsoft 365 Banner ────────────────────────────────────
+//  Rendered as a full-width contextual banner above the product grid
+//  (not a workbench panel) so it's visible regardless of scroll position.
+//  Shows for both Laptops and Computers — strongest M365 attach departments.
 
 function renderMicrosoft365Panel() {
-  const panel = document.getElementById("m365-panel");
-  const body = document.getElementById("m365-body");
-  const kicker = document.getElementById("m365-kicker");
-  if (!panel || !body || !kicker) return;
+  const banner = document.getElementById("m365-banner");
+  if (!banner) return;
 
-  const isComputerSale = state.selectedDeptId === "computers";
-  panel.hidden = !isComputerSale;
-  panel.classList.toggle("show", isComputerSale);
-  if (!isComputerSale) {
-    body.innerHTML = "";
-    return;
-  }
+  const show = state.selectedDeptId === "laptops" || state.selectedDeptId === "computers";
+  banner.hidden = !show;
+  if (!show) { banner.innerHTML = ""; return; }
 
-  kicker.textContent = "Recommended";
-  body.innerHTML = `
-    <div class="m365-hero">
-      <div class="m365-icon" aria-hidden="true">
-        <span></span><span></span><span></span><span></span>
+  const deptLabel = state.selectedDeptId === "laptops" ? "laptop" : "computer";
+
+  banner.innerHTML = `
+    <div class="m365-banner-in">
+      <div class="m365-hero">
+        <div class="m365-icon" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <div>
+          <div class="m365-title">Attach Microsoft 365 with every ${deptLabel}</div>
+          <div class="m365-copy">Word, Excel, PowerPoint, Outlook, 1 TB OneDrive — ready on day one. Easiest yes on the floor.</div>
+        </div>
       </div>
-      <div>
-        <div class="m365-title">Add Microsoft 365 to complete the computer</div>
-        <div class="m365-copy">The easiest yes for customers who need Word, Excel, PowerPoint, Outlook, storage, and protection ready on day one.</div>
+      <div class="m365-pills">
+        <div class="m365-pill"><span class="m365-pill-icon">✓</span> Office apps they already know</div>
+        <div class="m365-pill"><span class="m365-pill-icon">☁</span> 1 TB cloud backup</div>
+        <div class="m365-pill"><span class="m365-pill-icon">🔗</span> Up to 6 devices per family</div>
+        <div class="m365-pill m365-close"><span class="m365-pill-icon">💬</span> "Do you want Office and cloud backup set up with this today?"</div>
       </div>
     </div>
-    <div class="m365-benefits">
-      <div class="m365-benefit">
-        <span class="m365-benefit-icon">✓</span>
-        <div><strong>Office apps they already know</strong><span>Documents, budgets, schoolwork, resumes, and presentations without app hunting later.</span></div>
-      </div>
-      <div class="m365-benefit">
-        <span class="m365-benefit-icon">☁</span>
-        <div><strong>1 TB OneDrive backup</strong><span>Photos and files move with them if the computer is lost, damaged, or replaced.</span></div>
-      </div>
-      <div class="m365-benefit">
-        <span class="m365-benefit-icon">✦</span>
-        <div><strong>Best everyday value</strong><span>Recommend it because it makes the new PC more useful, safer, and easier to share across devices.</span></div>
-      </div>
-    </div>
-    <div class="m365-close-line">Quick close: "Do you want Office and cloud backup set up with the computer today?"</div>
   `;
 }
 
