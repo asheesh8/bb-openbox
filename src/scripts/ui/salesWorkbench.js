@@ -10,9 +10,11 @@ import state from "../state/appState.js";
 import { DEPTS } from "../config/productDepartments.js";
 import { findProductByKey, getProductKey } from "../utils/productUtils.js";
 import { getMembershipCost, getMembershipName, getMembershipBenefits } from "../utils/membershipUtils.js";
+import { getM365Cost, getM365Label } from "../utils/m365Utils.js";
 import { saveFavoriteProductKeys } from "../services/storageService.js";
 import { getSelectedStore } from "./storePanel.js";
 import { renderProductGrid } from "./productGrid.js";
+import { renderM365Banner } from "./m365Banner.js";
 
 // ─── Top-level render ────────────────────────────────────────
 
@@ -20,7 +22,7 @@ export function renderSalesWorkbench() {
   renderMembershipAttach();
   renderMemberPanel();
   renderBestBuyCardOffer();
-  renderMicrosoft365Panel();
+  renderM365Banner();      // full-width banner above the grid — lives in ui/m365Banner.js
   renderComparePanel();
   renderQuotePanel();
   renderFavoritesPanel();
@@ -189,75 +191,6 @@ function renderBestBuyCardOffer() {
   }
 }
 
-// ─── Microsoft 365 Banner ────────────────────────────────────
-//  Rendered as a full-width contextual banner above the product grid
-//  (not a workbench panel) so it's visible regardless of scroll position.
-//  Shows for both Laptops and Computers — strongest M365 attach departments.
-
-// M365 pricing constants — update here when pricing changes.
-const M365 = {
-  personal: { label: "Microsoft 365 Personal", price: 99.99, per: "yr", desc: "1 person · 1 TB OneDrive" },
-  family:   { label: "Microsoft 365 Family",   price: 129.99, per: "yr", desc: "Up to 6 people · 1 TB each" },
-};
-
-export function getM365Cost() {
-  return state.m365Plan ? M365[state.m365Plan].price : 0;
-}
-
-function renderMicrosoft365Panel() {
-  const banner = document.getElementById("m365-banner");
-  if (!banner) return;
-
-  const show = state.selectedDeptId === "laptops" || state.selectedDeptId === "computers";
-  banner.hidden = !show;
-  if (!show) { banner.innerHTML = ""; return; }
-
-  const deptLabel = state.selectedDeptId === "laptops" ? "laptop" : "computer";
-  const p = state.m365Plan;
-
-  banner.innerHTML = `
-    <div class="m365-banner-in">
-      <div class="m365-hero">
-        <div class="m365-icon" aria-hidden="true">
-          <span></span><span></span><span></span><span></span>
-        </div>
-        <div>
-          <div class="m365-title">Add Microsoft 365 with this ${deptLabel}</div>
-          <div class="m365-copy">Word, Excel, PowerPoint, Outlook, 1 TB OneDrive — ready on day one.</div>
-        </div>
-      </div>
-      <div class="m365-pills">
-        <div class="m365-pill"><span class="m365-pill-icon">✓</span> Office apps they already know</div>
-        <div class="m365-pill"><span class="m365-pill-icon">☁</span> 1 TB cloud backup</div>
-        <div class="m365-pill"><span class="m365-pill-icon">🛡️</span> Microsoft Defender included</div>
-        <div class="m365-pill"><span class="m365-pill-icon">🔗</span> Up to 6 devices per family</div>
-      </div>
-      <div class="m365-attach-row">
-        <button class="m365-attach-btn${p === "personal" ? " on" : ""}" data-m365="personal" type="button">
-          <span class="m365-attach-name">Personal</span>
-          <span class="m365-attach-price">$${M365.personal.price.toFixed(2)}/${M365.personal.per}</span>
-          <span class="m365-attach-desc">${M365.personal.desc}</span>
-        </button>
-        <button class="m365-attach-btn${p === "family" ? " on" : ""}" data-m365="family" type="button">
-          <span class="m365-attach-name">Family</span>
-          <span class="m365-attach-price">$${M365.family.price.toFixed(2)}/${M365.family.per}</span>
-          <span class="m365-attach-desc">${M365.family.desc}</span>
-        </button>
-        ${p ? `<button class="m365-remove-btn" data-m365="remove" type="button">Remove</button>` : ""}
-      </div>
-    </div>
-  `;
-
-  // Wire the plan toggle buttons.
-  banner.querySelectorAll("[data-m365]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const val = btn.dataset.m365;
-      state.m365Plan = val === "remove" ? null : (state.m365Plan === val ? null : val);
-      renderSalesWorkbench();
-    });
-  });
-}
-
 // ─── Compare Panel ───────────────────────────────────────────
 
 function renderComparePanel() {
@@ -300,10 +233,12 @@ function renderQuotePanel() {
     : "";
 
   // M365 row — only shown when a plan is selected and there are products in the basket.
-  const m365Row = (quoteItems.length && state.m365Plan)
+  const m365Cost = getM365Cost();
+  const m365Label = getM365Label();
+  const m365Row = (quoteItems.length && m365Cost)
     ? `<div class="quote-row membership">
-        <div class="quote-name">${M365[state.m365Plan].label}</div>
-        <div class="quote-price">$${M365[state.m365Plan].price.toFixed(2)}</div>
+        <div class="quote-name">${m365Label}</div>
+        <div class="quote-price">$${m365Cost.toFixed(2)}</div>
         <span class="quote-lock">Attach</span>
        </div>`
     : "";
@@ -320,8 +255,8 @@ function renderQuotePanel() {
   const subtotal = quoteItems.reduce((sum, i) => sum + i.sale, 0);
   const savings = quoteItems.reduce((sum, i) => sum + i.savings, 0);
   const planCost = quoteItems.length ? getMembershipCost() : 0;
-  const m365Cost = (quoteItems.length && state.m365Plan) ? M365[state.m365Plan].price : 0;
-  const taxable = subtotal + planCost + m365Cost;
+  const m365Attach = quoteItems.length ? m365Cost : 0;
+  const taxable = subtotal + planCost + m365Attach;
   const tax = taxable * store.tax;
   const estimated = taxable + tax;
 
@@ -332,7 +267,7 @@ function renderQuotePanel() {
   document.getElementById("quote-totals").innerHTML = `
     <div class="quote-total-row"><span>Products</span><strong>$${subtotal.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>${getMembershipName()}</span><strong>$${planCost.toFixed(2)}</strong></div>
-    ${m365Cost ? `<div class="quote-total-row"><span>${M365[state.m365Plan].label}</span><strong>$${m365Cost.toFixed(2)}</strong></div>` : ""}
+    ${m365Attach ? `<div class="quote-total-row"><span>${m365Label}</span><strong>$${m365Attach.toFixed(2)}</strong></div>` : ""}
     <div class="quote-total-row tax"><span>Est. tax · ${store.city} ${(store.tax * 100).toFixed(2)}%</span><strong>$${tax.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>Customer saves</span><strong>$${savings.toFixed(2)}</strong></div>
     <div class="quote-total-row"><span>Estimated basket</span><strong>$${estimated.toFixed(2)}</strong></div>
