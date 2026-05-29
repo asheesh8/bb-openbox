@@ -219,7 +219,6 @@ function renderMicrosoft365Panel() {
         <div class="m365-pill"><span class="m365-pill-icon">✓</span> Office apps they already know</div>
         <div class="m365-pill"><span class="m365-pill-icon">☁</span> 1 TB cloud backup</div>
         <div class="m365-pill"><span class="m365-pill-icon">🔗</span> Up to 6 devices per family</div>
-        <div class="m365-pill m365-close"><span class="m365-pill-icon">💬</span> "Do you want Office and cloud backup set up with this today?"</div>
       </div>
     </div>
   `;

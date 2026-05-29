@@ -200,9 +200,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .m365-copy { font-size: 11px; line-height: 1.35; color: var(--ink-3); font-weight: 650; margin-top: 2px; }
 .m365-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
 .m365-pill { display: flex; align-items: center; gap: 5px; background: var(--white); border: 1px solid #D0DFFF; border-radius: 999px; padding: 4px 10px 4px 6px; font-size: 11px; font-weight: 750; color: var(--ink-2); white-space: nowrap; }
-.m365-pill-icon { font-size: 12px; line-height: 1; }
-.m365-pill.m365-close { background: #FFF9D8; border-color: #F2E993; color: var(--ink); font-weight: 800; border-radius: var(--r8); white-space: normal; flex: 1 1 100%; }
-.compare-slots { display: grid; gap: 8px; }
+.m365-pill-icon { font-size: 12px; line-height: 1; }.compare-slots { display: grid; gap: 8px; }
 .compare-empty { border: 1px dashed var(--line); border-radius: var(--r8); min-height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; text-align: center; padding: 8px; }
 .compare-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
 .compare-name { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.25; }
