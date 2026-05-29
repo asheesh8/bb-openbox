@@ -200,7 +200,17 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .m365-copy { font-size: 11px; line-height: 1.35; color: var(--ink-3); font-weight: 650; margin-top: 2px; }
 .m365-pills { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
 .m365-pill { display: flex; align-items: center; gap: 5px; background: var(--white); border: 1px solid #D0DFFF; border-radius: 999px; padding: 4px 10px 4px 6px; font-size: 11px; font-weight: 750; color: var(--ink-2); white-space: nowrap; }
-.m365-pill-icon { font-size: 12px; line-height: 1; }.compare-slots { display: grid; gap: 8px; }
+.m365-pill-icon { font-size: 12px; line-height: 1; }
+.m365-attach-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 0 0 auto; }
+.m365-attach-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 7px 12px; border: 1.5px solid #C0D4FF; border-radius: var(--r8); background: var(--white); cursor: pointer; transition: border-color .15s, background .15s; min-width: 110px; }
+.m365-attach-btn:hover { border-color: var(--blue); background: #F0F6FF; }
+.m365-attach-btn.on { border-color: var(--blue); background: #E8F0FF; }
+.m365-attach-name { font-size: 12px; font-weight: 900; color: var(--ink); }
+.m365-attach-price { font-size: 13px; font-weight: 900; color: var(--blue); }
+.m365-attach-desc { font-size: 10px; font-weight: 650; color: var(--ink-3); }
+.m365-remove-btn { font-size: 11px; font-weight: 750; color: var(--ink-3); background: none; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; cursor: pointer; }
+.m365-remove-btn:hover { color: var(--ink); border-color: var(--ink-3); }
+.compare-slots { display: grid; gap: 8px; }
 .compare-empty { border: 1px dashed var(--line); border-radius: var(--r8); min-height: 44px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 12px; text-align: center; padding: 8px; }
 .compare-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: var(--r8); padding: 8px; background: var(--surface); }
 .compare-name { font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.25; }

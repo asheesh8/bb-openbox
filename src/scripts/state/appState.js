@@ -47,6 +47,9 @@ const state = {
   membershipPlan: "plus",
   selectedMember: null,
 
+  // Microsoft 365 attach — null means not added, "personal" or "family" when toggled on
+  m365Plan: null,
+
   // PWA
   installPromptEvent: null,
 
