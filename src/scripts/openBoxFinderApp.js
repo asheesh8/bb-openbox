@@ -440,7 +440,7 @@ function getMembershipName() {
 function getMembershipBenefits() {
   if (selectedMembershipPlan === "total") {
     return [
-      "All My Best Buy Plus benefits included",
+      "1% back in rewards on Best Buy purchases",
       "Up to 2 yrs product protection + AppleCare+",
       "Protection plans renewable after 2 yrs (TVs, laptops)",
       "24/7 tech support — in-store & remote",

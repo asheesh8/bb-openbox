@@ -36,10 +36,23 @@ function renderMembershipAttach() {
   );
   document.getElementById("attach-kicker").textContent =
     state.membershipPlan === "total" ? "Total selected" : "Plus selected";
-  document.getElementById("attach-benefits").innerHTML = `
-    <div class="attach-benefit-title">${getMembershipName()} key benefits</div>
+
+  const { shared, exclusive } = getMembershipBenefits();
+  const isTotal = state.membershipPlan === "total";
+
+  document.getElementById("attach-benefits").innerHTML = isTotal ? `
+    <div class="attach-benefit-title">Rewards — Plus &amp; Total</div>
     <ul class="attach-benefit-list">
-      ${getMembershipBenefits().map(b => `<li>${b}</li>`).join("")}
+      ${shared.map(b => `<li>${b}</li>`).join("")}
+    </ul>
+    <div class="attach-benefit-title attach-benefit-title--section">Total exclusive</div>
+    <ul class="attach-benefit-list">
+      ${exclusive.map(b => `<li>${b}</li>`).join("")}
+    </ul>
+  ` : `
+    <div class="attach-benefit-title">My Best Buy Plus key benefits</div>
+    <ul class="attach-benefit-list">
+      ${exclusive.map(b => `<li>${b}</li>`).join("")}
     </ul>
   `;
 }

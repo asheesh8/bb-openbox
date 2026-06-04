@@ -163,6 +163,7 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .attach-card.total .attach-price { color: rgba(255,255,255,.68); }
 .attach-benefits { margin-top: 10px; border: 1px solid var(--line); border-radius: var(--r8); background: var(--white); padding: 10px 12px; }
 .attach-benefit-title { font-size: 11px; font-weight: 900; color: var(--ink); margin-bottom: 7px; letter-spacing: .02em; }
+.attach-benefit-title--section { margin-top: 10px; color: var(--blue); }
 .attach-benefit-list { list-style: none; display: grid; gap: 6px; }
 .attach-benefit-list li { position: relative; padding-left: 14px; font-size: 12px; line-height: 1.35; color: var(--ink-2); font-weight: 600; }
 .attach-benefit-list li::before { content: ""; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--blue); }
