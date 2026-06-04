@@ -430,7 +430,7 @@ function saveFavoriteProductKeys() {
 
 // Returns the price of the currently selected membership attachment.
 function getMembershipCost() {
-  return selectedMembershipPlan === "total" ? 179.99 : 29.99;
+  return selectedMembershipPlan === "total" ? 199.99 : 29.99;
 }
 
 function getMembershipName() {
@@ -440,17 +440,20 @@ function getMembershipName() {
 function getMembershipBenefits() {
   if (selectedMembershipPlan === "total") {
     return [
-      "24/7 tech support for covered products",
-      "Protection plans included on eligible purchases",
-      "VIP member pricing and exclusive deals",
-      "Extended 60-day return window",
+      "All My Best Buy Plus benefits included",
+      "Up to 2 yrs product protection + AppleCare+",
+      "Protection plans renewable after 2 yrs (TVs, laptops)",
+      "24/7 tech support — in-store & remote",
+      "VIP member support",
+      "20% off repairs",
     ];
   }
   return [
-    "Member-only pricing and exclusive deals",
-    "Extended 60-day return window",
+    "1% back in rewards on Best Buy purchases",
+    "Exclusive member prices on thousands of items",
+    "Extended 60-day return & exchange window",
+    "Exclusive access to sales, events & products",
     "Free 2-day shipping on eligible items",
-    "Good attach for open box savings shoppers",
   ];
 }
 
