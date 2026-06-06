@@ -27,7 +27,7 @@ export const M365_PLANS = {
 };
 
 // Departments where M365 is a relevant attach — drives banner visibility.
-export const M365_DEPTS = ["laptops", "computers"];
+export const M365_DEPTS = ["laptops"];
 
 // Key selling points shown as pills in the banner.
 export const M365_BENEFITS = [
