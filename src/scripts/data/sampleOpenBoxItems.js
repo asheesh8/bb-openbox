@@ -1,6 +1,23 @@
 import { DEPTS } from "../config/productDepartments.js";
 
 // Demo products let the app run without a live API key during presentations.
+const IMAGE_SKU_OVERRIDES = {
+  "6534632": "6534615",
+  "6534001": "10895273",
+  "6543912": "6571371",
+  "6537029": "11996803",
+  "6534892": "11972434",
+  "6544510": "12110254",
+  "6539006": "6438723",
+  "6521121": "6532244",
+  "6514417": "6599654",
+  "6542015": "6535024",
+  "6532199": "6403999",
+};
+
+const bestBuyProductImage = sku =>
+  `https://pisces.bbystatic.com/image2/BestBuy_US/images/products/${String(sku).slice(0, 4)}/${sku}_sd.jpg`;
+
 export const DEMO_ITEMS = [
   {sku:"6534632",name:"Apple MacBook Pro 14\" M3 Pro 18GB/512GB",desc:"M3 Pro chip, 18GB unified memory, Liquid Retina XDR, ProRes",category:"laptops",reg:1999.99,sale:1399.99,cond:"excellent",rating:4.9,reviews:447,img:""},
   {sku:"6499198",name:"Dell XPS 15\" OLED Touch i7-13700H 16GB/512GB",desc:"Intel Core i7 13th Gen, NVIDIA RTX 4060, OLED touch 3.5K",category:"laptops",reg:1899.99,sale:1099.99,cond:"excellent",rating:4.6,reviews:312,img:""},
@@ -68,6 +85,7 @@ export const DEMO_ITEMS = [
 ];
 // Add the same calculated fields the live API mapper creates.
 DEMO_ITEMS.forEach(d => {
+  d.img = d.img || bestBuyProductImage(IMAGE_SKU_OVERRIDES[d.sku] || d.sku);
   d.savings = +(d.reg - d.sale).toFixed(2);
   d.pct = Math.round(d.savings / d.reg * 100);
   const dept = DEPTS.find(x => x.id === d.category);

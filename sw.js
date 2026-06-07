@@ -1,10 +1,10 @@
-const CACHE_NAME = "bb-openbox-v8";
+const CACHE_NAME = "bb-openbox-v9";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
-  "/src/styles/openBoxFinder.css?v=8",
-  "/src/scripts/main.js?v=8",
+  "/src/styles/openBoxFinder.css?v=9",
+  "/src/scripts/main.js?v=9",
   "/src/scripts/openBoxFinderApp.js",
   "/src/scripts/config/productDepartments.js",
   "/src/scripts/config/storeLocations.js",
