@@ -22,6 +22,7 @@ import { renderDepartmentTabs } from "./ui/departmentNav.js";
 import { renderFilterBar } from "./ui/filterBar.js";
 import { renderProductGrid } from "./ui/productGrid.js";
 import { renderSalesWorkbench } from "./ui/salesWorkbench.js";
+import { setupProductDetailView, renderProductDetailFromUrl } from "./ui/productDetailView.js";
 import { setupLpnModal, setupFavoritesModal } from "./ui/modals.js";
 import { setupAiAdvisor } from "./ui/aiAdvisor.js";
 import { setupInstallPrompt, registerServiceWorker } from "./ui/installPrompt.js";
@@ -38,6 +39,7 @@ setupInstallPrompt();
 setupLpnModal();
 setupFavoritesModal();
 setupAiAdvisor();
+setupProductDetailView();
 wireStaticEventListeners();
 
 // Decide what to show on load:
@@ -89,6 +91,7 @@ async function startApp(demo) {
     renderProductGrid();
     renderSalesWorkbench();
     renderInventoryStatus();
+    renderProductDetailFromUrl();
   } catch (err) {
     console.error("App startup failed", err);
     loading.style.display = "none";

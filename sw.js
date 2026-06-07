@@ -1,10 +1,10 @@
-const CACHE_NAME = "bb-openbox-v9";
+const CACHE_NAME = "bb-openbox-v10";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
-  "/src/styles/openBoxFinder.css?v=9",
-  "/src/scripts/main.js?v=9",
+  "/src/styles/openBoxFinder.css?v=10",
+  "/src/scripts/main.js?v=10",
   "/src/scripts/openBoxFinderApp.js",
   "/src/scripts/config/productDepartments.js",
   "/src/scripts/config/storeLocations.js",
@@ -19,12 +19,14 @@ const CORE_ASSETS = [
   "/src/scripts/ui/installPrompt.js",
   "/src/scripts/ui/inventoryStatus.js",
   "/src/scripts/ui/modals.js",
+  "/src/scripts/ui/productDetailView.js",
   "/src/scripts/ui/productGrid.js",
   "/src/scripts/ui/salesWorkbench.js",
   "/src/scripts/ui/storePanel.js",
   "/src/scripts/ui/toast.js",
   "/src/scripts/utils/htmlUtils.js",
   "/src/scripts/utils/membershipUtils.js",
+  "/src/scripts/utils/productDetailRoute.js",
   "/src/scripts/utils/productUtils.js",
   "/src/scripts/utils/quoteUtils.js",
   "/assets/app-icon.svg",

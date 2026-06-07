@@ -3,6 +3,7 @@ import { DEPTS } from "../config/productDepartments.js";
 // Demo products let the app run without a live API key during presentations.
 const IMAGE_SKU_OVERRIDES = {
   "6534632": "6534615",
+  "6499198": "6540611",
   "6534001": "10895273",
   "6543912": "6571371",
   "6537029": "11996803",

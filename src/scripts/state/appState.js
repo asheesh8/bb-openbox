@@ -36,6 +36,7 @@ const state = {
 
   // UI
   expandedProductKey: null,
+  detailProductKey: null,
   signedInRole: "",
 
   // Sales workbench selections

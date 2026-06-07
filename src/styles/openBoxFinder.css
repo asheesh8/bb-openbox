@@ -318,6 +318,59 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 .pc-act.primary:hover { background: #EEF3FF; }
 .pc-act + .pc-act { border-left: 1px solid var(--line-2); }
 
+/* PRODUCT DETAIL */
+.product-detail[hidden] { display: none; }
+.app.detail-open .dept-bar,
+.app.detail-open .controls,
+.app.detail-open .sales-workbench,
+.app.detail-open .results-header,
+.app.detail-open #m365-banner,
+.app.detail-open .grid-wrap,
+.app.detail-open .app-footer { display: none; }
+.app.detail-open + .quote-fab { display: none; }
+.product-detail { max-width: 1080px; margin: 0 auto; padding: 16px 20px 96px; }
+.detail-shell { display: grid; gap: 16px; }
+.detail-topbar { min-height: 54px; position: sticky; top: 54px; z-index: 120; background: rgba(247,249,251,.96); backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: var(--r16); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; }
+.detail-back { min-height: 38px; border: none; border-radius: var(--r8); background: var(--blue); color: var(--white); font-family: inherit; font-size: 13px; font-weight: 800; padding: 0 14px; cursor: pointer; }
+.detail-store { font-size: 12px; font-weight: 800; color: var(--ink-3); text-align: right; }
+.detail-main { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr); gap: 16px; align-items: stretch; }
+.detail-media,
+.detail-info,
+.detail-panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--r16); box-shadow: 0 8px 22px rgba(15,25,35,.06); }
+.detail-media { min-height: 390px; position: relative; display: flex; align-items: center; justify-content: center; padding: 30px; overflow: hidden; }
+.detail-img { max-width: 100%; max-height: 340px; object-fit: contain; display: block; }
+.detail-img-placeholder { color: var(--ink-3); font-size: 52px; font-weight: 900; }
+.detail-condition { position: absolute; left: 16px; top: 16px; border-radius: 999px; padding: 7px 10px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .04em; }
+.detail-info { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.detail-brand { color: var(--blue); font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; }
+.detail-title { color: var(--ink); font-size: 30px; line-height: 1.08; letter-spacing: 0; font-weight: 900; }
+.detail-desc { color: var(--ink-3); font-size: 15px; line-height: 1.55; }
+.detail-specs { display: flex; flex-wrap: wrap; gap: 8px; }
+.detail-spec { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 7px 10px; font-size: 12px; font-weight: 800; }
+.detail-price-card { margin-top: auto; border-radius: var(--r16); background: var(--ink); color: var(--white); display: flex; justify-content: space-between; gap: 14px; padding: 18px; }
+.detail-sale { color: var(--yellow); font-size: 34px; line-height: 1; font-weight: 900; }
+.detail-was { margin-top: 6px; color: rgba(255,255,255,.72); font-size: 13px; font-weight: 700; }
+.detail-was span { text-decoration: line-through; }
+.detail-save { align-self: center; min-width: 108px; border-radius: var(--r12); background: var(--yellow); color: var(--blue); padding: 12px 10px; font-size: 18px; font-weight: 900; text-align: center; }
+.detail-save span { display: block; margin-top: 2px; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
+.detail-action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.detail-action { min-height: 46px; border: 1px solid var(--line); border-radius: var(--r12); background: var(--white); color: var(--ink); font-family: inherit; font-size: 13px; font-weight: 900; cursor: pointer; }
+.detail-action.primary { border-color: var(--yellow); background: var(--yellow); color: var(--blue); }
+.detail-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.detail-panel { padding: 18px; }
+.detail-panel-title { color: var(--ink); font-size: 16px; font-weight: 900; margin-bottom: 12px; }
+.detail-inventory { display: grid; gap: 10px; }
+.detail-inventory-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line-2); padding-bottom: 10px; }
+.detail-inventory-row:last-child { border-bottom: none; padding-bottom: 0; }
+.detail-inventory-row span,
+.detail-mini-grid span { color: var(--ink-3); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+.detail-inventory-row strong { color: var(--ink); font-size: 13px; text-align: right; }
+.detail-note { background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--r12); padding: 12px; color: var(--ink-2); font-size: 13px; line-height: 1.55; margin-bottom: 12px; }
+.detail-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.detail-mini-grid div { border: 1px solid var(--line-2); border-radius: var(--r12); padding: 11px; display: grid; gap: 5px; }
+.detail-mini-grid strong { color: var(--ink); font-size: 13px; }
+.detail-bottom-bar { display: none; }
+
 /* expanded detail */
 .pc-expand { display: none; border-top: 1px solid var(--line); background: var(--surface); }
 .pc-expand.open { display: block; }
@@ -475,6 +528,32 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
   .quote-fab-icon { font-size: 24px; line-height: 1; position: relative; }
   .quote-fab-count { position: absolute; top: -9px; right: -11px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--yellow); color: var(--blue); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; border: 2px solid var(--ink); }
   .quote-fab-total { font-size: 12px; font-weight: 900; line-height: 1; white-space: nowrap; }
+  .product-detail { padding: 0 12px 96px; }
+  .detail-shell { gap: 12px; }
+  .detail-topbar { top: calc(50px + env(safe-area-inset-top)); margin: 0 -12px; border-left: none; border-right: none; border-radius: 0; padding: 9px 12px; min-height: 50px; }
+  .detail-back { min-height: 36px; padding: 0 12px; font-size: 12px; }
+  .detail-store { font-size: 11px; }
+  .detail-main { grid-template-columns: 1fr; gap: 12px; }
+  .detail-media { min-height: 250px; margin: 0 -12px; border-left: none; border-right: none; border-radius: 0 0 14px 14px; padding: 22px; }
+  .detail-img { max-height: 224px; }
+  .detail-condition { left: 12px; top: 12px; }
+  .detail-info { padding: 16px; border-radius: 12px; gap: 12px; }
+  .detail-title { font-size: 22px; line-height: 1.16; }
+  .detail-desc { font-size: 14px; }
+  .detail-spec { font-size: 11px; padding: 6px 9px; }
+  .detail-price-card { border-radius: 14px; padding: 15px; align-items: center; }
+  .detail-sale { font-size: 29px; }
+  .detail-save { min-width: 92px; font-size: 15px; }
+  .detail-action-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .detail-action { min-height: 44px; border-radius: 10px; font-size: 12px; }
+  .detail-panels { grid-template-columns: 1fr; gap: 12px; }
+  .detail-panel { padding: 15px; border-radius: 12px; }
+  .detail-inventory-row { gap: 12px; }
+  .detail-mini-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .detail-bottom-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 540; display: grid; grid-template-columns: .8fr 1fr 1fr; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.97); border-top: 1px solid var(--line); box-shadow: 0 -10px 28px rgba(15,25,35,.12); }
+  .detail-bottom-bar button { min-height: 44px; border: none; border-radius: 12px; background: var(--ink); color: var(--white); font-family: inherit; font-size: 13px; font-weight: 900; }
+  .detail-bottom-bar button:nth-child(2) { background: var(--yellow); color: var(--blue); }
+  .detail-bottom-bar button:nth-child(3) { background: var(--blue); color: var(--white); }
   .modal-actions { grid-template-columns: 1fr; }
   .install-prompt { bottom: 12px; grid-template-columns: 38px 1fr; }
   .install-actions { grid-column: 1 / -1; justify-content: flex-end; }
