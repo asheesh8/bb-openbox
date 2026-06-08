@@ -29,6 +29,7 @@ import { setupInstallPrompt, registerServiceWorker } from "./ui/installPrompt.js
 import { showToast } from "./ui/toast.js";
 import { resetFiltersForDept } from "./utils/productUtils.js";
 import { buildQuoteText, buildFavoritesText } from "./utils/quoteUtils.js";
+import { startGuidedTour } from "./ui/guidedTour.js";
 
 // ─────────────────────────────────────────────
 //  STARTUP
@@ -36,6 +37,19 @@ import { buildQuoteText, buildFavoritesText } from "./utils/quoteUtils.js";
 
 registerServiceWorker();
 setupInstallPrompt();
+
+// Clicking the BB logo on the gate screen launches the guided associate walkthrough.
+{
+  const gateLogo = document.querySelector(".gate-logo");
+  if (gateLogo) {
+    gateLogo.classList.add("gate-logo-clickable");
+    gateLogo.setAttribute("title", "Click for guided walkthrough");
+    gateLogo.addEventListener("click", () => {
+      document.getElementById("gate").style.display = "none";
+      startApp(true).then(() => startGuidedTour());
+    });
+  }
+}
 setupLpnModal();
 setupFavoritesModal();
 setupAiAdvisor();

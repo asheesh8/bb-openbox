@@ -25,7 +25,10 @@ body { font-family: 'DM Sans', -apple-system, sans-serif; background: #DCE6F1; c
 /* ── SETUP ── */
 .gate { position: fixed; inset: 0; z-index: 600; background: var(--blue); display: flex; align-items: center; justify-content: center; padding: 24px; }
 .gate-card { background: var(--white); border-radius: var(--r24); padding: 36px 32px; max-width: 420px; width: 100%; }
-.gate-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.gate-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; cursor: pointer; border-radius: 8px; transition: opacity 0.15s; }
+.gate-logo:hover { opacity: 0.82; }
+.gate-logo-labels { display: flex; flex-direction: column; gap: 2px; }
+.gate-logo-hint { font-size: 11px; color: var(--ink-3); font-weight: 500; letter-spacing: 0.02em; }
 .bb-mark { display: inline-flex; align-items: center; gap: 7px; background: var(--blue); color: var(--white); border-radius: var(--r4); padding: 9px 10px; font-weight: 900; font-size: 17px; line-height: .85; letter-spacing: -.03em; }
 .bb-mark.small { padding: 6px 8px; font-size: 12px; }
 .bb-mark-text { display: inline-block; }
