@@ -1,5 +1,40 @@
 // Guided walkthrough overlay — launched when the associate clicks the BB logo on the gate screen.
 
+const SCENARIOS = [
+  {
+    tag: "Bringing It Up",
+    icon: "💬",
+    setup: "Customer is browsing TVs, hasn't committed yet",
+    script: `"Hey real quick — you mind if I pull something up? There's a tool I use that shows all our open box stock with exact prices. Sometimes it's the same exact TV for like $200 less." Then just hand them your phone and let the savings do the talking.`,
+  },
+  {
+    tag: "Pitching Total",
+    icon: "🛡️",
+    setup: "Customer found an open box item they like",
+    script: `"So you're already saving [X] off retail — for $199 a year, Total covers this plus up to 4 other devices in your house. Drops, spills, tech support, 20% off repairs. On something like this it pretty much pays for itself the first time something goes wrong."`,
+  },
+  {
+    tag: "M365 on a Laptop",
+    icon: "💻",
+    setup: "Customer is buying an open box laptop or computer",
+    script: `"Are you gonna be doing any Word docs or spreadsheets on this? We can add Microsoft 365 today — it's Word, Excel, PowerPoint, and a full terabyte of OneDrive. Normally $100 a year, and it works on up to 6 devices so your whole family can use it."`,
+  },
+  {
+    tag: "1% Back with Total",
+    icon: "💰",
+    setup: "Customer is on the fence about Total",
+    script: `"One thing people don't always catch — with Total you get 1% back on basically everything you buy here. So on a $700 TV you're already getting $7 back, and it stacks. If you shop here even a few times a year it adds up pretty fast on top of everything else Total does."`,
+  },
+  {
+    tag: "Condition Tiers",
+    icon: "📦",
+    setup: "Customer asks what 'Excellent' or 'Certified' means",
+    script: `"Certified is basically brand new — somebody bought it and returned it unopened or barely used, Best Buy inspected it and it's fully functional. Excellent means it works perfectly but might have a tiny scratch you'd have to look for. Scratch & Dent is where the big discounts are — cosmetic only, works the same."`,
+  },
+];
+
+let scenarioIdx = 0;
+
 const STEPS = [
   {
     target: null,
@@ -113,6 +148,21 @@ function buildDom() {
       <div id="tour-ttl"></div>
       <div id="tour-body"></div>
       <div id="tour-hint" hidden></div>
+      <div id="tour-elearn" hidden>
+        <div id="elearn-header">
+          <span id="elearn-heading">Real Talk</span>
+          <div id="elearn-nav">
+            <button id="elearn-prev" type="button" aria-label="Previous scenario">‹</button>
+            <span id="elearn-counter"></span>
+            <button id="elearn-next" type="button" aria-label="Next scenario">›</button>
+          </div>
+        </div>
+        <div id="elearn-card">
+          <div id="elearn-setup"></div>
+          <div id="elearn-script"></div>
+        </div>
+        <div id="elearn-tags"></div>
+      </div>
       <div id="tour-foot">
         <button id="tour-prev" type="button">← Back</button>
         <div id="tour-dots"></div>
@@ -125,7 +175,28 @@ function buildDom() {
   document.getElementById("tour-next").addEventListener("click", advance);
   document.getElementById("tour-prev").addEventListener("click", retreat);
   document.getElementById("tour-x").addEventListener("click", closeTour);
+  document.getElementById("elearn-next").addEventListener("click", () => { scenarioIdx = (scenarioIdx + 1) % SCENARIOS.length; renderScenario(); });
+  document.getElementById("elearn-prev").addEventListener("click", () => { scenarioIdx = (scenarioIdx - 1 + SCENARIOS.length) % SCENARIOS.length; renderScenario(); });
   document.addEventListener("keydown", onKey);
+  renderScenario();
+}
+
+// ── eLearning scenarios ────────────────────────────────────────────────────
+
+function renderScenario() {
+  const s = SCENARIOS[scenarioIdx];
+  document.getElementById("elearn-setup").textContent  = s.setup;
+  document.getElementById("elearn-script").textContent = s.script;
+  document.getElementById("elearn-counter").textContent = `${scenarioIdx + 1}/${SCENARIOS.length}`;
+
+  const tags = document.getElementById("elearn-tags");
+  tags.innerHTML = SCENARIOS.map((sc, i) =>
+    `<span class="etag${i === scenarioIdx ? " on" : ""}">${sc.icon} ${sc.tag}</span>`
+  ).join("");
+
+  tags.querySelectorAll(".etag").forEach((el, i) => {
+    el.addEventListener("click", () => { scenarioIdx = i; renderScenario(); });
+  });
 }
 
 // ── Render ─────────────────────────────────────────────────────────────────
@@ -155,6 +226,10 @@ function renderStep(idx) {
   const nextBtn = document.getElementById("tour-next");
   prevBtn.style.visibility = idx === 0 ? "hidden" : "visible";
   nextBtn.textContent = idx === total - 1 ? "Finish ✓" : "Next →";
+
+  // Show eLearning section only in desktop sidebar mode
+  const elearn = document.getElementById("tour-elearn");
+  if (elearn) elearn.hidden = !isDesktop();
 
   document.getElementById("tour-dots").innerHTML = STEPS.map((_, i) =>
     `<span class="tdot${i === idx ? " on" : ""}"></span>`
@@ -575,6 +650,112 @@ function injectStyles() {
       transition:background .2s, width .2s;
     }
     .tdot.on { background:#ffe000; width:10px; border-radius:2px; }
+
+    /* ── eLearning panel (desktop sidebar only) ── */
+    #tour-elearn {
+      margin-top: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 14px;
+    }
+    #elearn-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    #elearn-heading {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+    #elearn-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    #elearn-nav button {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.4);
+      border-radius: 5px;
+      width: 20px; height: 20px;
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s;
+      padding: 0;
+    }
+    #elearn-nav button:hover { background: rgba(255,255,255,0.12); color:#fff; }
+    #elearn-counter {
+      font-size: 9px;
+      color: rgba(255,255,255,0.25);
+      font-weight: 600;
+      min-width: 24px;
+      text-align: center;
+    }
+    #elearn-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 10px;
+      padding: 11px 12px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    #elearn-setup {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(255,224,0,0.6);
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-size: 9px;
+      letter-spacing: 0.8px;
+    }
+    #elearn-script {
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      font-style: italic;
+    }
+    #elearn-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .etag {
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .etag:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+    .etag.on {
+      background: rgba(255,224,0,0.1);
+      border-color: rgba(255,224,0,0.3);
+      color: rgba(255,224,0,0.85);
+    }
+
+    /* Make body not flex:1 when elearn is present so elearn fills the space */
+    #tour-tooltip.is-sidebar #tour-body {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.55);
+      flex: 0;
+    }
 
     /* Gate logo hint */
     .gate-logo-hint {
