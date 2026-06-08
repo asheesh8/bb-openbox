@@ -318,6 +318,8 @@ function positionDesktop(step, tooltip) {
 
 function positionMobile(step, tooltip) {
   tooltip.classList.remove("is-sidebar");
+  const elearn = document.getElementById("tour-elearn");
+  if (elearn) elearn.hidden = true;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const spotlight = document.getElementById("tour-spotlight");
@@ -650,6 +652,9 @@ function injectStyles() {
       transition:background .2s, width .2s;
     }
     .tdot.on { background:#ffe000; width:10px; border-radius:2px; }
+
+    /* eLearning never shows outside sidebar mode */
+    #tour-tooltip:not(.is-sidebar) #tour-elearn { display: none !important; }
 
     /* ── eLearning panel (desktop sidebar only) ── */
     #tour-elearn {
