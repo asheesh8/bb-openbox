@@ -1,13 +1,33 @@
 import { DEPTS } from "../config/productDepartments.js";
 
+// Aborts a fetch that never resolves so a blocked or unreachable API can't trap
+// the caller (e.g. leave the loading screen spinning forever).
+async function fetchJson(url, { timeoutMs = 12000 } = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) return null;
+    // Guard against a 200 that isn't actually JSON (e.g. an offline/app-shell
+    // HTML page served by a cache). Treating that as success previously made an
+    // invalid key look valid and returned empty inventory.
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("json")) return null;
+    return await response.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 // Sends a tiny request so we can tell whether the pasted Best Buy API key works.
 export async function verifyBestBuyApiKey(apiKey) {
-  try {
-    const response = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=abcat0507002)?apiKey=${apiKey}&pageSize=1`);
-    return response.ok;
-  } catch {
-    return false;
-  }
+  const data = await fetchJson(
+    `https://api.bestbuy.com/beta/products/openBox(categoryId=abcat0507002)?apiKey=${apiKey}&pageSize=1`,
+    { timeoutMs: 8000 }
+  );
+  return Boolean(data);
 }
 
 // Downloads open box offers for every department category and normalizes them.
@@ -20,9 +40,8 @@ export async function fetchOpenBoxInventory({ apiKey, store, onStatus = () => {}
 
   await Promise.all(categoryIds.map(async catId => {
     try {
-      const response = await fetch(`https://api.bestbuy.com/beta/products/openBox(categoryId=${catId})?apiKey=${apiKey}&pageSize=100&storeId=${store.bbStoreId}`);
-      if (!response.ok) return;
-      const data = await response.json();
+      const data = await fetchJson(`https://api.bestbuy.com/beta/products/openBox(categoryId=${catId})?apiKey=${apiKey}&pageSize=100&storeId=${store.bbStoreId}`);
+      if (!data) return;
       const dept = DEPTS.find(candidate => candidate.cats.includes(catId));
       if (!dept) return;
 
@@ -64,13 +83,7 @@ export async function fetchOpenBoxInventory({ apiKey, store, onStatus = () => {}
 }
 
 async function fetchProductDescription(apiKey, item) {
-  let fullDesc = item.descriptions?.short || "";
-  try {
-    const response = await fetch(`https://api.bestbuy.com/v1/products/${item.sku}.json?show=shortDescription,manufacturer,modelNumber&apiKey=${apiKey}`);
-    if (!response.ok) return fullDesc;
-    const data = await response.json();
-    return data.shortDescription || fullDesc;
-  } catch {
-    return fullDesc;
-  }
+  const fullDesc = item.descriptions?.short || "";
+  const data = await fetchJson(`https://api.bestbuy.com/v1/products/${item.sku}.json?show=shortDescription,manufacturer,modelNumber&apiKey=${apiKey}`);
+  return data?.shortDescription || fullDesc;
 }

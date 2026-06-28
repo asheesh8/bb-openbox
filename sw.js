@@ -1,10 +1,10 @@
-const CACHE_NAME = "bb-openbox-v10";
+const CACHE_NAME = "bb-openbox-v11";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/manifest.webmanifest",
   "/src/styles/openBoxFinder.css?v=10",
-  "/src/scripts/main.js?v=10",
+  "/src/scripts/main.js?v=11",
   "/src/scripts/openBoxFinderApp.js",
   "/src/scripts/config/productDepartments.js",
   "/src/scripts/config/storeLocations.js",
@@ -52,6 +52,18 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+
+  const url = new URL(event.request.url);
+
+  // Only handle our own origin. Cross-origin requests — most importantly the
+  // Best Buy API and Anthropic calls — must go straight to the network. If the
+  // worker intercepted them, a failed API call would fall back to index.html
+  // (a 200 HTML page), which made the API-key check falsely "succeed" and left
+  // inventory empty.
+  if (url.origin !== self.location.origin) return;
+
+  const isNavigation = event.request.mode === "navigate";
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
@@ -59,6 +71,15 @@ self.addEventListener("fetch", event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then(cached => cached || caches.match("/index.html")))
+      .catch(() =>
+        caches.match(event.request).then(cached => {
+          if (cached) return cached;
+          // Only navigations get the app shell as an offline fallback. Asset,
+          // script, and data requests must fail honestly instead of receiving
+          // HTML they can't parse.
+          if (isNavigation) return caches.match("/index.html");
+          return Response.error();
+        })
+      )
   );
 });

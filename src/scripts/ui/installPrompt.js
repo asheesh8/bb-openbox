@@ -59,13 +59,12 @@ export function setupInstallPrompt() {
 
 export function registerServiceWorker() {
   if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
-  let refreshedForController = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (refreshedForController) return;
-    refreshedForController = true;
-    window.location.reload();
-  });
 
+  // A new service worker takes control on the next navigation. We deliberately
+  // do NOT force a reload on `controllerchange`: combined with the worker's
+  // skipWaiting()/clients.claim(), an auto-reload here fires on first visit and
+  // on every deploy, which the user sees as the page "refreshing" and never
+  // settling. Letting the new worker activate quietly avoids that loop.
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js")
       .then(reg => reg.update().catch(() => {}))
