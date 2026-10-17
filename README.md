@@ -4,6 +4,19 @@ A progressive web app for Best Buy store associates to surface, filter, and pitc
 
 ---
 
+**Live:** https://bb-openbox.vercel.app
+
+## Running it
+
+Plain ES modules, no build step and no dependencies.
+
+```bash
+npm run dev      # python3 -m http.server 4173
+npm run check    # syntax-check the main modules
+```
+
+There are no server-side environment variables. The Best Buy API key is entered by the associate inside the app and kept only in that browser's `localStorage` (`storageService.js`); without it the app runs on the demo catalog. The AI advisor calls the Anthropic API straight from the browser with no key, so it falls back to the local keyword advisor — a live advisor needs a small server-side proxy that holds the key. Vercel serves the folder as a static site.
+
 ## What it does
 
 Associates land on a grid of open box deals scoped to their store. They can filter by department, brand, condition, price range, and sort by savings or rating. Tapping a card expands coaching notes tailored to the condition tier — what to lead with, how to anchor on the savings, what to acknowledge upfront. From there they can add items to a comparison tray, build a customer basket, run the AI advisor for a quick recommendation, and copy a full quote with tax and membership math to their clipboard.

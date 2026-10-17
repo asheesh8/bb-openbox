@@ -17,6 +17,9 @@ export async function fetchLiveAdvisorResponse(query, items) {
     )
     .join("\n");
 
+  // No API key is sent: a key in browser code would be public. Without one this
+  // request is rejected and the caller falls back to the local keyword advisor.
+  // To go live, route this through a server-side proxy that adds the key.
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
